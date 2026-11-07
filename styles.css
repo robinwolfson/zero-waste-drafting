@@ -81,7 +81,57 @@ h3 { font-size: 1.2rem; }
 .note { font-size: .85rem; color: var(--muted); margin: 0 0 1rem; }
 .classroom-cue { margin: .9rem 0 0; text-align: center; font-weight: 700; }
 .classroom-cue a { color: var(--navy); text-decoration-color: var(--accent); text-decoration-thickness: 2px; text-underline-offset: .18em; }
-#classroom-license { scroll-margin-top: 5.5rem; }
+#classroom-license, #studio-team-license, #office-team-license, #team-license-quote { scroll-margin-top: 5.5rem; }
+.license-banner {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: .35rem;
+  padding: 1.5rem 1.25rem;
+  background: var(--navy);
+  color: #fff;
+  border-top: 8px solid var(--accent);
+  border-bottom: 8px solid var(--accent);
+}
+.license-kicker {
+  margin: 0;
+  color: var(--accent);
+  font-size: .75rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.license-name {
+  margin: .15rem 0 0;
+  color: #fff;
+  font-size: clamp(1.35rem, 3vw, 1.7rem);
+  font-weight: 800;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+.license-pill {
+  display: inline-block;
+  margin: .45rem 0 0;
+  padding: .3rem .85rem;
+  background: var(--accent);
+  color: var(--navy);
+  font-size: .85rem;
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  border-radius: 999px;
+}
+.license-includes {
+  margin: .7rem 0 0;
+  color: #e6eaf3;
+  font-size: .92rem;
+  line-height: 1.4;
+  text-wrap: balance;
+}
+.team-quote .card-body a { overflow-wrap: break-word; }
 
 /* Preview */
 .preview-grid figure { margin: 0; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
@@ -180,10 +230,23 @@ details p { margin: .6rem 0 0; }
 @media (min-width: 640px) {
   .grid, .preview-grid { grid-template-columns: repeat(2, 1fr); }
 }
+/* At two columns the quote sits under both licenses as one row, not a giant square. */
+@media (min-width: 640px) and (max-width: 959px) {
+  .grid > .team-quote {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    align-items: stretch;
+  }
+  .team-quote .license-banner {
+    aspect-ratio: auto;
+    flex: 1 1 42%;
+  }
+  .team-quote .card-body { flex: 1 1 58%; }
+}
 @media (min-width: 960px) {
   .hero { padding: 4rem 0; }
   .grid { grid-template-columns: repeat(6, 1fr); }
-  /* Six product cards, three per row. */
+  /* Product cards stay the same width, three per row. */
   .grid > .card { grid-column: span 2; }
   .preview-grid { grid-template-columns: repeat(3, 1fr); }
   .bundle-grid { grid-template-columns: repeat(2, 1fr); }

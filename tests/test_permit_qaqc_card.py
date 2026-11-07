@@ -50,6 +50,16 @@ EXISTING = {
         "https://buymeacoffee.com/robinwolfson/e/593901",
         "https://zerowastedrafting.etsy.com/listing/4609960632/revit-and-cad-drafting-bundle-commercial",
     ),
+    "Studio Team License": (
+        "$79",
+        "https://buymeacoffee.com/robinwolfson/e/595451",
+        None,
+    ),
+    "Office Team License": (
+        "$139",
+        "https://buymeacoffee.com/robinwolfson/e/595452",
+        None,
+    ),
 }
 
 BMAC = "https://buymeacoffee.com/robinwolfson/e/595488"
@@ -127,6 +137,9 @@ class PermitKitCardTest(unittest.TestCase):
                 "The Commercial Revit Template & Standards Pack",
                 "Commercial Revit Template & Standards Pack, Classroom License",
                 "Commercial Permit-Set QA/QC + Pre-Submittal Review Kit",
+                "Studio Team License",
+                "Office Team License",
+                "11+ seats",
             ],
         )
 
@@ -204,6 +217,50 @@ class PermitKitCardTest(unittest.TestCase):
         self.assertIn(".grid > .card { grid-column: span 2; }", CSS)
         self.assertNotIn("card-revit { grid-column: span 3", CSS)
         self.assertNotIn("#permit-qaqc { grid-column:", CSS)
+        self.assertNotIn("#studio-team-license { grid-column:", CSS)
+        self.assertNotIn("#office-team-license { grid-column:", CSS)
+
+    def test_firm_team_licenses(self):
+        product_html = HTML.split('id="products"', 1)[1].split('id="preview"', 1)[0]
+        by_id = {attr(attrs, "id"): body for attrs, body in articles(product_html)}
+        studio = by_id["studio-team-license"]
+        office = by_id["office-team-license"]
+        quote = by_id["team-license-quote"]
+
+        self.assertLess(product_html.index('id="classroom-license"'), product_html.index('id="studio-team-license"'))
+        self.assertLess(product_html.index('id="studio-team-license"'), product_html.index('id="office-team-license"'))
+        self.assertLess(product_html.index('id="office-team-license"'), product_html.index('id="team-license-quote"'))
+
+        for card, price, href in (
+            (studio, "$79", "https://buymeacoffee.com/robinwolfson/e/595451"),
+            (office, "$139", "https://buymeacoffee.com/robinwolfson/e/595452"),
+        ):
+            self.assertEqual(price_of(card), price)
+            self.assertIn("Commercial Revit Template &amp; Standards Pack", card)
+            self.assertIn("The Freelance CAD Drafting Starter Guide", card)
+            self.assertNotIn("etsy", card.lower())
+            self.assertNotIn("btn-secondary", card)
+            primary = hrefs(card, "btn btn-primary btn-block")
+            self.assertEqual([link for link, _ in primary], [href])
+            for _, extra in primary:
+                self.assertIn('target="_blank"', extra)
+                self.assertIn('rel="noopener"', extra)
+
+        self.assertIn("Up to 5 users", studio)
+        self.assertIn("up to 5", studio)
+        self.assertIn("Up to 10 users", office)
+        self.assertIn("up to 10", office)
+        self.assertNotIn("$79", office)
+        self.assertNotIn("$139", studio)
+        self.assertNotIn('class="price"', quote)
+        self.assertNotIn("buymeacoffee.com", quote)
+        self.assertNotIn("etsy", quote.lower())
+        self.assertEqual(quote.count("mailto:robinwolfson.drafting@gmail.com"), 2)
+        self.assertIn("11 or more seats", quote)
+        self.assertIn("Quoted by email", quote)
+        quote_rule = CSS.split(".grid > .team-quote {", 1)[1].split("}", 1)[0]
+        self.assertIn("grid-column: 1 / -1;", quote_rule)
+        self.assertIn("flex-direction: row;", quote_rule)
 
 
 if __name__ == "__main__":
