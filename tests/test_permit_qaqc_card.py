@@ -50,11 +50,6 @@ EXISTING = {
         "https://buymeacoffee.com/robinwolfson/e/593901",
         "https://zerowastedrafting.etsy.com/listing/4609960632/revit-and-cad-drafting-bundle-commercial",
     ),
-    "Complete Zero Waste Drafting Bundle": (
-        "$39",
-        "https://buymeacoffee.com/robinwolfson/e/593903",
-        "https://zerowastedrafting.etsy.com/listing/4609961312/six-sigma-and-revit-bundle-green-belt",
-    ),
 }
 
 BMAC = "https://buymeacoffee.com/robinwolfson/e/595488"
