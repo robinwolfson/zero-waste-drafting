@@ -125,23 +125,57 @@ class PermitKitCardTest(unittest.TestCase):
         self.assertEqual(len(found), 1)
         self.card = found[0]
 
-    def test_card_sits_with_the_cad_and_revit_products(self):
-        product_html = HTML.split('id="products"', 1)[1].split('id="preview"', 1)[0]
-        titles = [text_of(body, "h3") for _, body in articles(product_html)]
+    def titles_between(self, start_id, end_id):
+        fragment = HTML.split(f'id="{start_id}"', 1)[1].split(f'id="{end_id}"', 1)[0]
+        return [text_of(body, "h3") for _, body in articles(fragment)]
+
+    def test_cards_are_grouped_into_sections(self):
         self.assertEqual(
-            titles,
+            self.titles_between("lean-six-sigma", "cad"),
             [
                 "Lean Six Sigma Green Belt Study Guide + 75-Question Practice Exam",
                 "The Lean Six Sigma Toolkit",
+            ],
+        )
+        self.assertEqual(
+            self.titles_between("cad", "revit"),
+            [
                 "The Freelance CAD Drafting Starter Guide",
+                "Commercial Permit-Set QA/QC + Pre-Submittal Review Kit",
+            ],
+        )
+        self.assertEqual(
+            self.titles_between("revit", "bundles"),
+            [
                 "The Commercial Revit Template & Standards Pack",
                 "Commercial Revit Template & Standards Pack, Classroom License",
-                "Commercial Permit-Set QA/QC + Pre-Submittal Review Kit",
                 "Studio Team License",
                 "Office Team License",
                 "11+ seats",
             ],
         )
+        self.assertEqual(
+            self.titles_between("bundles", "preview"),
+            [
+                "Lean Six Sigma Bundle",
+                "CAD + Revit Bundle",
+            ],
+        )
+        titles = [text_of(body, "h3") for _, body in articles(HTML)]
+        self.assertEqual(len(titles), len(set(titles)))
+        self.assertEqual(len(titles), 11)
+
+    def test_section_nav_anchors(self):
+        nav = HTML.split('aria-label="Product categories"', 1)[1].split("</nav>", 1)[0]
+        self.assertEqual(
+            re.findall(r'href="(#[^"]+)"', nav),
+            ["#lean-six-sigma", "#cad", "#revit", "#bundles"],
+        )
+        for section_id in ("lean-six-sigma", "cad", "revit", "bundles"):
+            self.assertIn(f'id="{section_id}"', HTML)
+        quiz = HTML.split('id="free-quiz"', 1)[1].split('id="free-revit-sheet"', 1)[0]
+        self.assertIn("Green Belt Practice Quiz: 10 free questions", quiz)
+        self.assertNotIn("<article", quiz)
 
     def test_price_formats_and_store_links(self):
         self.assertEqual(text_of(self.card, "h3"), "Commercial Permit-Set QA/QC + Pre-Submittal Review Kit")
