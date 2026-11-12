@@ -45,11 +45,6 @@ EXISTING = {
         "https://buymeacoffee.com/robinwolfson/e/593126",
         "https://zerowastedrafting.etsy.com/listing/4609959548/six-sigma-green-belt-bundle-study-guide",
     ),
-    "CAD + Revit Bundle": (
-        "$22",
-        "https://buymeacoffee.com/robinwolfson/e/593901",
-        "https://zerowastedrafting.etsy.com/listing/4609960632/revit-and-cad-drafting-bundle-commercial",
-    ),
     "Studio Team License": (
         "$79",
         "https://buymeacoffee.com/robinwolfson/e/595451",
@@ -166,12 +161,15 @@ class PermitKitCardTest(unittest.TestCase):
             self.titles_between("bundles", "preview"),
             [
                 "Lean Six Sigma Bundle",
-                "CAD + Revit Bundle",
             ],
         )
         titles = [text_of(body, "h3") for _, body in articles(HTML)]
         self.assertEqual(len(titles), len(set(titles)))
-        self.assertEqual(len(titles), 14)
+        self.assertEqual(len(titles), 13)
+        self.assertNotIn("CAD + Revit Bundle", HTML)
+        self.assertNotIn("593901", HTML)
+        self.assertNotIn("4609960632", HTML)
+        self.assertNotIn("cad-revit-bundle-cover.jpg", HTML)
 
     def test_section_nav_anchors(self):
         nav = HTML.split('aria-label="Product categories"', 1)[1].split("</nav>", 1)[0]
