@@ -138,9 +138,14 @@ class PermitKitCardTest(unittest.TestCase):
             ],
         )
         self.assertEqual(
-            self.titles_between("cad", "revit"),
+            self.titles_between("cad", "commercial-permitting"),
             [
                 "The Freelance CAD Drafting Starter Guide",
+            ],
+        )
+        self.assertEqual(
+            self.titles_between("commercial-permitting", "revit"),
+            [
                 "Commercial Permit-Set QA/QC + Pre-Submittal Review Kit",
             ],
         )
@@ -169,9 +174,9 @@ class PermitKitCardTest(unittest.TestCase):
         nav = HTML.split('aria-label="Product categories"', 1)[1].split("</nav>", 1)[0]
         self.assertEqual(
             re.findall(r'href="(#[^"]+)"', nav),
-            ["#lean-six-sigma", "#cad", "#revit", "#bundles"],
+            ["#lean-six-sigma", "#cad", "#commercial-permitting", "#revit", "#bundles"],
         )
-        for section_id in ("lean-six-sigma", "cad", "revit", "bundles"):
+        for section_id in ("lean-six-sigma", "cad", "commercial-permitting", "revit", "bundles"):
             self.assertIn(f'id="{section_id}"', HTML)
         quiz = HTML.split('id="free-quiz"', 1)[1].split('id="free-revit-sheet"', 1)[0]
         self.assertIn("Green Belt Practice Quiz: 10 free questions", quiz)
