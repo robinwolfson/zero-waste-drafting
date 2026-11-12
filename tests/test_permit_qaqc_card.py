@@ -331,8 +331,8 @@ class PermitKitCardTest(unittest.TestCase):
                 "price": "$17",
                 "bmac": "https://buymeacoffee.com/robinwolfson/e/597743",
                 "etsy": "https://zerowastedrafting.etsy.com/listing/4615758689/autocad-standards-pack-commercial",
-                "cover": "images/commercial-autocad-cad-standards-pack-cover.jpg",
-                "file": ROOT / "images" / "commercial-autocad-cad-standards-pack-cover.jpg",
+                "cover": "images/commercial-autocad-standards-pack-cover.jpg",
+                "file": ROOT / "images" / "commercial-autocad-standards-pack-cover.jpg",
             },
         }
         for card_id, spec in expected.items():
