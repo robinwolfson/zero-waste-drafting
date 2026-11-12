@@ -133,17 +133,11 @@ class PermitKitCardTest(unittest.TestCase):
             ],
         )
         self.assertEqual(
-            self.titles_between("cad", "commercial-permitting"),
+            self.titles_between("cad", "revit"),
             [
                 "The Freelance CAD Drafting Starter Guide",
                 "Commercial AutoCAD Starter Kit",
                 "The Commercial AutoCAD Standards Pack",
-            ],
-        )
-        self.assertEqual(
-            self.titles_between("commercial-permitting", "revit"),
-            [
-                "Commercial Permit-Set QA/QC + Pre-Submittal Review Kit",
             ],
         )
         self.assertEqual(
@@ -158,11 +152,17 @@ class PermitKitCardTest(unittest.TestCase):
             ],
         )
         self.assertEqual(
-            self.titles_between("bundles", "preview"),
+            self.titles_between("bundles", "commercial-permitting"),
             [
                 "Lean Six Sigma Bundle",
                 "The Commercial AutoCAD Bundle",
                 "The Freelance Revit Bundle",
+            ],
+        )
+        self.assertEqual(
+            self.titles_between("commercial-permitting", "preview"),
+            [
+                "Commercial Permit-Set QA/QC + Pre-Submittal Review Kit",
             ],
         )
         titles = [text_of(body, "h3") for _, body in articles(HTML)]
@@ -177,9 +177,9 @@ class PermitKitCardTest(unittest.TestCase):
         nav = HTML.split('aria-label="Product categories"', 1)[1].split("</nav>", 1)[0]
         self.assertEqual(
             re.findall(r'href="(#[^"]+)"', nav),
-            ["#lean-six-sigma", "#cad", "#commercial-permitting", "#revit", "#bundles"],
+            ["#lean-six-sigma", "#cad", "#revit", "#bundles", "#commercial-permitting"],
         )
-        for section_id in ("lean-six-sigma", "cad", "commercial-permitting", "revit", "bundles"):
+        for section_id in ("lean-six-sigma", "cad", "revit", "bundles", "commercial-permitting"):
             self.assertIn(f'id="{section_id}"', HTML)
         quiz = HTML.split('id="free-quiz"', 1)[1].split('id="free-revit-sheet"', 1)[0]
         self.assertIn("Green Belt Practice Quiz: 10 free questions", quiz)
@@ -368,7 +368,7 @@ class PermitKitCardTest(unittest.TestCase):
             product_html.index('id="freelance-revit-playbook"'),
             product_html.index('id="studio-team-license"'),
         )
-        cad = product_html.split('id="cad"', 1)[1].split('id="commercial-permitting"', 1)[0]
+        cad = product_html.split('id="cad"', 1)[1].split('id="revit"', 1)[0]
         self.assertLess(cad.index('id="autocad-starter-kit"'), cad.index('id="autocad-standards-pack"'))
         self.assertIn("The Freelance CAD Drafting Starter Guide", cad)
 
