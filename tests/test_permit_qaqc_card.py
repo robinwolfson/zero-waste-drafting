@@ -527,18 +527,19 @@ class PermitKitCardTest(unittest.TestCase):
 
 
 
-    def test_goatcounter_placeholder_tracking(self):
+    def test_goatcounter_tracking(self):
         self.assertIn('src="analytics.js"', HTML)
-        self.assertIn('data-goatcounter="https://YOUR-CODE.goatcounter.com/count"', HTML)
+        self.assertIn('data-goatcounter="https://zerowastedrafting.goatcounter.com/count"', HTML)
+        self.assertNotIn("YOUR-CODE.goatcounter.com", HTML)
         self.assertTrue((ROOT / "analytics.js").is_file())
         js = (ROOT / "analytics.js").read_text(encoding="utf-8")
-        self.assertIn("YOUR-CODE", js)
         self.assertIn("click-bmac", js)
         self.assertIn("click-etsy", js)
         self.assertIn("download-cheat-sheet", js)
         self.assertIn("form-submit-revit-cheat-sheet", js)
         self.assertIn("mlWebformSubmitSuccess", js)
-        # Do not load GoatCounter until Robin replaces the placeholder site code.
+        self.assertIn("Commercial-Revit-Naming-Cheat-Sheet", js)
+        # Still refuse to load if a placeholder endpoint is used.
         self.assertIn('indexOf("://" + PLACEHOLDER + ".")', js)
         self.assertNotIn("gc.zgo.at/count.js", HTML)
         # Tracking must not rewrite store links or section order.

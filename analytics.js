@@ -1,7 +1,7 @@
 /* Privacy-friendly pageview and click tracking via GoatCounter.
  * Cookie-less; no personal data is stored in the browser.
- * This file is a no-op until the placeholder site code below is replaced
- * with the code from a free GoatCounter site (https://www.goatcounter.com).
+ * Loads only when data-goatcounter on this script tag is a real site
+ * endpoint, not the YOUR-CODE placeholder.
  */
 (function () {
   "use strict";
