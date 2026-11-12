@@ -137,7 +137,7 @@ class PermitKitCardTest(unittest.TestCase):
             [
                 "The Freelance CAD Drafting Starter Guide",
                 "Commercial AutoCAD Starter Kit",
-                "The Commercial AutoCAD CAD Standards Pack",
+                "The Commercial AutoCAD Standards Pack",
             ],
         )
         self.assertEqual(
@@ -327,7 +327,7 @@ class PermitKitCardTest(unittest.TestCase):
                 "file": ROOT / "images" / "commercial-autocad-starter-kit-cover.jpg",
             },
             "autocad-standards-pack": {
-                "title": "The Commercial AutoCAD CAD Standards Pack",
+                "title": "The Commercial AutoCAD Standards Pack",
                 "price": "$17",
                 "bmac": "https://buymeacoffee.com/robinwolfson/e/597743",
                 "etsy": "https://zerowastedrafting.etsy.com/listing/4615758689/autocad-standards-pack-commercial",
@@ -387,7 +387,7 @@ class PermitKitCardTest(unittest.TestCase):
                 "contains": [
                     "Freelance CAD Drafting Starter Guide",
                     "Commercial AutoCAD Starter Kit",
-                    "The Commercial AutoCAD CAD Standards Pack",
+                    "The Commercial AutoCAD Standards Pack",
                     "Save $9",
                     "$48",
                 ],
