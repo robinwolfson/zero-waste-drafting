@@ -141,6 +141,8 @@ class PermitKitCardTest(unittest.TestCase):
             self.titles_between("cad", "commercial-permitting"),
             [
                 "The Freelance CAD Drafting Starter Guide",
+                "Commercial AutoCAD Starter Kit",
+                "The Commercial AutoCAD CAD Standards Pack",
             ],
         )
         self.assertEqual(
@@ -152,6 +154,7 @@ class PermitKitCardTest(unittest.TestCase):
         self.assertEqual(
             self.titles_between("revit", "bundles"),
             [
+                "The Freelance Revit Playbook",
                 "The Commercial Revit Template & Standards Pack",
                 "Commercial Revit Template & Standards Pack, Classroom License",
                 "Studio Team License",
@@ -168,7 +171,7 @@ class PermitKitCardTest(unittest.TestCase):
         )
         titles = [text_of(body, "h3") for _, body in articles(HTML)]
         self.assertEqual(len(titles), len(set(titles)))
-        self.assertEqual(len(titles), 11)
+        self.assertEqual(len(titles), 14)
 
     def test_section_nav_anchors(self):
         nav = HTML.split('aria-label="Product categories"', 1)[1].split("</nav>", 1)[0]
@@ -300,6 +303,76 @@ class PermitKitCardTest(unittest.TestCase):
         quote_rule = CSS.split(".grid > .team-quote {", 1)[1].split("}", 1)[0]
         self.assertIn("grid-column: 1 / -1;", quote_rule)
         self.assertIn("flex-direction: row;", quote_rule)
+
+    def test_nov12_product_cards(self):
+        cards = {
+            attr(attrs, "id"): body
+            for attrs, body in articles(HTML)
+        }
+        expected = {
+            "freelance-revit-playbook": {
+                "title": "The Freelance Revit Playbook",
+                "price": "$17",
+                "bmac": "https://buymeacoffee.com/robinwolfson/e/597740",
+                "etsy": "https://zerowastedrafting.etsy.com/listing/4615769344/the-freelance-revit-playbook-scope-price",
+                "cover": "images/freelance-revit-playbook-cover.jpg",
+                "file": ROOT / "images" / "freelance-revit-playbook-cover.jpg",
+            },
+            "autocad-starter-kit": {
+                "title": "Commercial AutoCAD Starter Kit",
+                "price": "$19",
+                "bmac": "https://buymeacoffee.com/robinwolfson/e/597741",
+                "etsy": "https://zerowastedrafting.etsy.com/listing/4615757637/commercial-autocad-starter-kit-for",
+                "cover": "images/commercial-autocad-starter-kit-cover.jpg",
+                "file": ROOT / "images" / "commercial-autocad-starter-kit-cover.jpg",
+            },
+            "autocad-standards-pack": {
+                "title": "The Commercial AutoCAD CAD Standards Pack",
+                "price": "$17",
+                "bmac": "https://buymeacoffee.com/robinwolfson/e/597743",
+                "etsy": "https://zerowastedrafting.etsy.com/listing/4615758689/autocad-standards-pack-commercial",
+                "cover": "images/commercial-autocad-cad-standards-pack-cover.jpg",
+                "file": ROOT / "images" / "commercial-autocad-cad-standards-pack-cover.jpg",
+            },
+        }
+        for card_id, spec in expected.items():
+            self.assertIn(card_id, cards)
+            card = cards[card_id]
+            self.assertEqual(text_of(card, "h3"), spec["title"])
+            self.assertEqual(price_of(card), spec["price"])
+            self.assertIn(f'Buy for {spec["price"]}', card)
+            self.assertIn("Also on Etsy", card)
+            self.assertIn(f'src="{spec["cover"]}"', card)
+            self.assertIn('width="800"', card)
+            self.assertIn('height="800"', card)
+            primary = hrefs(card, "btn btn-primary")
+            secondary = hrefs(card, "btn btn-secondary")
+            self.assertEqual([href for href, _ in primary], [spec["bmac"]])
+            self.assertEqual([href for href, _ in secondary], [spec["etsy"]])
+            for _, extra in primary + secondary:
+                self.assertIn('target="_blank"', extra)
+                self.assertIn('rel="noopener"', extra)
+            self.assertNotIn("downloads/", card)
+            self.assertNotIn("-records", card)
+            self.assertTrue(spec["file"].is_file())
+            self.assertEqual(jpeg_size(spec["file"]), (800, 800))
+            self.assertLess(spec["file"].stat().st_size, 180_000)
+            self.assertNotIn("user", spec["file"].name.lower())
+
+        product_html = HTML.split('id="products"', 1)[1].split('id="preview"', 1)[0]
+        self.assertLess(
+            product_html.index('id="freelance-revit-playbook"'),
+            product_html.index('id="classroom-license"'),
+        )
+        self.assertLess(
+            product_html.index('id="freelance-revit-playbook"'),
+            product_html.index('id="studio-team-license"'),
+        )
+        cad = product_html.split('id="cad"', 1)[1].split('id="commercial-permitting"', 1)[0]
+        self.assertLess(cad.index('id="autocad-starter-kit"'), cad.index('id="autocad-standards-pack"'))
+        self.assertIn("The Freelance CAD Drafting Starter Guide", cad)
+
+
 
 
 if __name__ == "__main__":
