@@ -527,6 +527,29 @@ class PermitKitCardTest(unittest.TestCase):
 
 
 
+    def test_goatcounter_placeholder_tracking(self):
+        self.assertIn('src="analytics.js"', HTML)
+        self.assertIn('data-goatcounter="https://YOUR-CODE.goatcounter.com/count"', HTML)
+        self.assertTrue((ROOT / "analytics.js").is_file())
+        js = (ROOT / "analytics.js").read_text(encoding="utf-8")
+        self.assertIn("YOUR-CODE", js)
+        self.assertIn("click-bmac", js)
+        self.assertIn("click-etsy", js)
+        self.assertIn("download-cheat-sheet", js)
+        self.assertIn("form-submit-revit-cheat-sheet", js)
+        self.assertIn("mlWebformSubmitSuccess", js)
+        # Do not load GoatCounter until Robin replaces the placeholder site code.
+        self.assertIn('indexOf("://" + PLACEHOLDER + ".")', js)
+        self.assertNotIn("gc.zgo.at/count.js", HTML)
+        # Tracking must not rewrite store links or section order.
+        nav = HTML.split('aria-label="Product categories"', 1)[1].split("</nav>", 1)[0]
+        self.assertEqual(
+            re.findall(r'href="(#[^"]+)"', nav),
+            ["#lean-six-sigma", "#cad", "#revit", "#bundles", "#commercial-permitting"],
+        )
+
+
+
 
 if __name__ == "__main__":
     unittest.main()
