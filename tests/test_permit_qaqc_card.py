@@ -137,7 +137,7 @@ class PermitKitCardTest(unittest.TestCase):
             [
                 "The Freelance CAD Drafting Starter Guide",
                 "Commercial AutoCAD Starter Kit",
-                "The Commercial AutoCAD CAD Standards Pack",
+                "The Commercial AutoCAD Standards Pack",
             ],
         )
         self.assertEqual(
@@ -327,7 +327,7 @@ class PermitKitCardTest(unittest.TestCase):
                 "file": ROOT / "images" / "commercial-autocad-starter-kit-cover.jpg",
             },
             "autocad-standards-pack": {
-                "title": "The Commercial AutoCAD CAD Standards Pack",
+                "title": "The Commercial AutoCAD Standards Pack",
                 "price": "$17",
                 "bmac": "https://buymeacoffee.com/robinwolfson/e/597743",
                 "etsy": "https://zerowastedrafting.etsy.com/listing/4615758689/autocad-standards-pack-commercial",
@@ -387,7 +387,7 @@ class PermitKitCardTest(unittest.TestCase):
                 "contains": [
                     "Freelance CAD Drafting Starter Guide",
                     "Commercial AutoCAD Starter Kit",
-                    "The Commercial AutoCAD CAD Standards Pack",
+                    "The Commercial AutoCAD Standards Pack",
                     "Save $9",
                     "$48",
                 ],
@@ -443,6 +443,87 @@ class PermitKitCardTest(unittest.TestCase):
             bundles.index('id="commercial-autocad-bundle"'),
             bundles.index('id="freelance-revit-bundle"'),
         )
+
+
+
+    def test_card_image_lightbox_and_title_links(self):
+        self.assertIn('src="lightbox.js"', HTML)
+        self.assertIn('<script src="lightbox.js" defer></script>', HTML)
+        self.assertNotIn("cdn.", Path(ROOT / "lightbox.js").read_text(encoding="utf-8"))
+        js = (ROOT / "lightbox.js").read_text(encoding="utf-8")
+        self.assertTrue((ROOT / "lightbox.js").is_file())
+        self.assertIn("Escape", js)
+        self.assertIn("data-lightbox-close", js)
+        self.assertIn("data-full-src", js)
+        self.assertIn("cursor: zoom-in", CSS)
+        self.assertIn("transform: scale(1.05)", CSS)
+        self.assertIn("@media (hover: hover)", CSS)
+        self.assertIn("role=\"dialog\"", HTML)
+        self.assertIn("aria-modal=\"true\"", HTML)
+        self.assertIn('id="product-lightbox"', HTML)
+        self.assertIn('id="lightbox-caption"', HTML)
+        self.assertIn("lightbox-backdrop", HTML)
+        self.assertIn('aria-label="Close expanded image"', HTML)
+
+        product_html = HTML.split('id="products"', 1)[1].split('id="preview"', 1)[0]
+        covers = 0
+        title_links = 0
+        for attrs, body in articles(product_html):
+            title = text_of(body, "h3")
+            img_tags = re.findall(r"<img\b[^>]*>", body)
+            cover_imgs = [tag for tag in img_tags if "cover.jpg" in tag]
+            self.assertLessEqual(len(cover_imgs), 1, title)
+            if cover_imgs:
+                covers += 1
+                self.assertIn('class="card-image"', body)
+                self.assertIn('type="button"', body)
+                self.assertIn('aria-haspopup="dialog"', body)
+                self.assertIn('aria-controls="product-lightbox"', body)
+                self.assertIn("View larger cover of", body)
+                # The cover is inside a button, not a link, so a click cannot navigate.
+                button = re.search(
+                    r'<button type="button" class="card-image"[^>]*>.*?</button>',
+                    body,
+                    flags=re.S,
+                )
+                self.assertIsNotNone(button, title)
+                self.assertNotIn("<a ", button.group(0))
+                self.assertIn(cover_imgs[0], button.group(0))
+
+            buy = hrefs(body, "btn btn-primary") or hrefs(body, "btn btn-primary btn-block")
+            etsy = hrefs(body, "btn btn-secondary")
+            heading = re.search(r"<h3>(.*?)</h3>", body, flags=re.S)
+            self.assertIsNotNone(heading, title)
+            heading_html = heading.group(1)
+            if buy and buy[0][0].startswith("https://buymeacoffee.com/"):
+                target = buy[0][0]
+            elif etsy:
+                target = etsy[0][0]
+            else:
+                self.assertEqual(title, "11+ seats")
+                self.assertNotIn("card-title-link", heading_html)
+                self.assertNotIn("<a ", heading_html)
+                continue
+            title_links += 1
+            link = re.search(
+                r'<a class="card-title-link" href="([^"]+)"([^>]*)>',
+                heading_html,
+            )
+            self.assertIsNotNone(link, title)
+            self.assertEqual(link.group(1), target, title)
+            self.assertIn('target="_blank"', link.group(2))
+            self.assertIn('rel="noopener"', link.group(2))
+            # Buy buttons still use the original store URLs and are separate from the title.
+            self.assertIn(f'href="{target}"', body)
+
+        self.assertEqual(covers, 12)
+        self.assertEqual(title_links, 14)
+        # Preview and quiz images stay plain images, not lightbox triggers.
+        preview = HTML.split('id="preview"', 1)[1]
+        self.assertNotIn("card-image", preview.split('id="products"', 1)[0] if False else preview)
+        self.assertIn("preview-green-belt-worked-example.jpg", preview)
+        self.assertNotIn('cdn.jsdelivr', HTML + CSS + js)
+        self.assertNotIn("unpkg.com", HTML + CSS + js)
 
 
 
