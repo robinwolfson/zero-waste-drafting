@@ -161,11 +161,13 @@ class PermitKitCardTest(unittest.TestCase):
             self.titles_between("bundles", "preview"),
             [
                 "Lean Six Sigma Bundle",
+                "The Commercial AutoCAD Bundle",
+                "The Freelance Revit Bundle",
             ],
         )
         titles = [text_of(body, "h3") for _, body in articles(HTML)]
         self.assertEqual(len(titles), len(set(titles)))
-        self.assertEqual(len(titles), 13)
+        self.assertEqual(len(titles), 15)
         self.assertNotIn("CAD + Revit Bundle", HTML)
         self.assertNotIn("593901", HTML)
         self.assertNotIn("4609960632", HTML)
@@ -369,6 +371,78 @@ class PermitKitCardTest(unittest.TestCase):
         cad = product_html.split('id="cad"', 1)[1].split('id="commercial-permitting"', 1)[0]
         self.assertLess(cad.index('id="autocad-starter-kit"'), cad.index('id="autocad-standards-pack"'))
         self.assertIn("The Freelance CAD Drafting Starter Guide", cad)
+
+
+
+    def test_nov12_bundle_cards(self):
+        cards = {attr(attrs, "id"): body for attrs, body in articles(HTML)}
+        expected = {
+            "commercial-autocad-bundle": {
+                "title": "The Commercial AutoCAD Bundle",
+                "price": "$39",
+                "bmac": "https://buymeacoffee.com/robinwolfson/e/597753",
+                "etsy": "https://zerowastedrafting.etsy.com/listing/4615785177/commercial-autocad-bundle-freelance-cad",
+                "cover": "images/commercial-autocad-bundle-cover.jpg",
+                "file": ROOT / "images" / "commercial-autocad-bundle-cover.jpg",
+                "contains": [
+                    "Freelance CAD Drafting Starter Guide",
+                    "Commercial AutoCAD Starter Kit",
+                    "The Commercial AutoCAD CAD Standards Pack",
+                    "Save $9",
+                    "$48",
+                ],
+            },
+            "freelance-revit-bundle": {
+                "title": "The Freelance Revit Bundle",
+                "price": "$26",
+                "bmac": "https://buymeacoffee.com/robinwolfson/e/597754",
+                "etsy": "https://zerowastedrafting.etsy.com/listing/4615786025/freelance-revit-bundle-commercial",
+                "cover": "images/freelance-revit-bundle-cover.jpg",
+                "file": ROOT / "images" / "freelance-revit-bundle-cover.jpg",
+                "contains": [
+                    "Commercial Revit Template &amp; Standards Pack",
+                    "The Freelance Revit Playbook",
+                    "Save $6",
+                    "$32",
+                ],
+            },
+        }
+        for card_id, spec in expected.items():
+            self.assertIn(card_id, cards)
+            card = cards[card_id]
+            self.assertEqual(text_of(card, "h3"), spec["title"])
+            self.assertEqual(price_of(card), spec["price"])
+            self.assertIn(f'Buy the bundle for {spec["price"]}', card)
+            self.assertIn("Also on Etsy", card)
+            self.assertIn(f'src="{spec["cover"]}"', card)
+            self.assertIn('width="800"', card)
+            self.assertIn('height="800"', card)
+            for phrase in spec["contains"]:
+                self.assertIn(phrase, card)
+            primary = hrefs(card, "btn btn-primary")
+            secondary = hrefs(card, "btn btn-secondary")
+            self.assertEqual([href for href, _ in primary], [spec["bmac"]])
+            self.assertEqual([href for href, _ in secondary], [spec["etsy"]])
+            for _, extra in primary + secondary:
+                self.assertIn('target="_blank"', extra)
+                self.assertIn('rel="noopener"', extra)
+            self.assertNotIn("downloads/", card)
+            self.assertNotIn("-records", card)
+            self.assertTrue(spec["file"].is_file())
+            self.assertEqual(jpeg_size(spec["file"]), (800, 800))
+            self.assertLess(spec["file"].stat().st_size, 180_000)
+            self.assertNotIn("user", spec["file"].name.lower())
+
+        product_html = HTML.split('id="products"', 1)[1].split('id="preview"', 1)[0]
+        bundles = product_html.split('id="bundles"', 1)[1]
+        self.assertLess(
+            bundles.index("Lean Six Sigma Bundle"),
+            bundles.index('id="commercial-autocad-bundle"'),
+        )
+        self.assertLess(
+            bundles.index('id="commercial-autocad-bundle"'),
+            bundles.index('id="freelance-revit-bundle"'),
+        )
 
 
 
