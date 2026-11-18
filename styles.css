@@ -299,6 +299,8 @@ h3 { font-size: 1.2rem; }
   text-transform: uppercase;
 }
 .lighting-disclaimer { margin: 1.25rem 0 0; max-width: 46rem; }
+.card-with-note { display: flex; flex-direction: column; min-width: 0; align-self: start; }
+.card-with-note > .note { margin: .75rem 0 0; }
 /* Article labels are longer than "Buy for $29", so they stack instead of breaking mid-word. */
 #florida-lighting-article .purchase-actions { flex-direction: column; }
 #florida-lighting-article .purchase-actions .btn { text-wrap: nowrap; white-space: nowrap; }
@@ -434,6 +436,7 @@ details p { margin: .6rem 0 0; }
   .grid { grid-template-columns: repeat(6, 1fr); }
   /* Product cards stay the same width, three per row. */
   .grid > .card { grid-column: span 2; }
+  .grid > .card-with-note { grid-column: span 2; }
   .preview-grid { grid-template-columns: repeat(3, 1fr); }
   .bundle-grid { grid-template-columns: repeat(2, 1fr); }
   .callout-inner { grid-template-columns: 320px 1fr; }
