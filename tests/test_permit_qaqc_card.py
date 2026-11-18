@@ -138,6 +138,7 @@ class PermitKitCardTest(unittest.TestCase):
                 "The Freelance CAD Drafting Starter Guide",
                 "Commercial AutoCAD Starter Kit",
                 "The Commercial AutoCAD Standards Pack",
+                "AI Prompt Pack for CAD and Revit Drafters",
             ],
         )
         self.assertEqual(
@@ -169,7 +170,7 @@ class PermitKitCardTest(unittest.TestCase):
         catalog = HTML.split('id="preview"', 1)[0]
         titles = [text_of(body, "h3") for _, body in articles(catalog)]
         self.assertEqual(len(titles), len(set(titles)))
-        self.assertEqual(len(titles), 18)
+        self.assertEqual(len(titles), 19)
         self.assertNotIn("CAD + Revit Bundle", HTML)
         self.assertNotIn("593901", HTML)
         self.assertNotIn("4609960632", HTML)
@@ -216,6 +217,8 @@ class PermitKitCardTest(unittest.TestCase):
         self.assertIn("Not legal or code advice", self.card)
         self.assertIn("not a code review", self.card)
         self.assertIn("not a guarantee of permit approval or code compliance", self.card)
+        # The prompt pack disclaimer says output is "not code-compliant". That negation stays.
+        checked = HTML.replace("not code-compliant", "")
         for phrase in (
             "25.60",
             "Nov 18",
@@ -227,7 +230,7 @@ class PermitKitCardTest(unittest.TestCase):
             "code compliant",
             "will be approved",
         ):
-            self.assertNotIn(phrase, HTML)
+            self.assertNotIn(phrase, checked)
 
     def test_existing_products_and_bundles_unchanged(self):
         seen = {}
@@ -519,7 +522,7 @@ class PermitKitCardTest(unittest.TestCase):
             self.assertIn(f'href="{target}"', body)
 
         self.assertEqual(covers, 12)
-        self.assertEqual(title_links, 14)
+        self.assertEqual(title_links, 15)
         # Preview and quiz images stay plain images, not lightbox triggers.
         preview = HTML.split('id="preview"', 1)[1].split("</section>", 1)[0]
         self.assertNotIn("card-image", preview)
