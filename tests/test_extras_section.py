@@ -217,6 +217,19 @@ class ExtrasSectionTest(unittest.TestCase):
         self.assertIn("#extras,", desktop)
         self.assertIn("scroll-margin-top: 5.5rem", desktop)
 
+    def test_faq_covers_digital_downloads_and_shipped_prints(self):
+        faq = HTML.split('id="faq"', 1)[1]
+        delivery = faq.split("How do I get my files?", 1)[1].split("</details>", 1)[0]
+        self.assertNotIn("Nothing is shipped", HTML)
+        self.assertIn("instant digital downloads through Buy Me a Coffee", delivery)
+        self.assertIn("After checkout you download the files right away.", delivery)
+        self.assertIn("Classroom License", delivery)
+        self.assertIn(
+            "The Extras prints (the calendar and posters) are printed on demand and shipped by our print partner via Etsy, usually in 2-6 business days.",
+            delivery,
+        )
+        self.assertIn("No returns, but damaged items are replaced.", delivery)
+
 
 if __name__ == "__main__":
     unittest.main()
