@@ -107,7 +107,8 @@ h3 { font-size: 1.2rem; }
   border-left: 4px solid var(--accent);
 }
 .product-group .grid + .grid { margin-top: 1.5rem; }
-#products { scroll-margin-top: 9rem; }
+#products,
+#extras { scroll-margin-top: 9rem; }
 
 /* Cards */
 .grid, .bundle-grid, .preview-grid { display: grid; gap: 1.5rem; grid-template-columns: 1fr; }
@@ -126,6 +127,20 @@ h3 { font-size: 1.2rem; }
 }
 .card-image img,
 .card > img { aspect-ratio: 1 / 1; object-fit: cover; width: 100%; height: 100%; transition: transform .3s ease; }
+/* Print previews are full portrait sheets, so they keep their own ratio instead of the square crop used for guide covers. */
+#extras .card-image img { object-fit: contain; }
+#drafting-scenes-calendar .card-image,
+#drafting-scenes-calendar .card-image img {
+  aspect-ratio: 913 / 1400;
+  background: #030b1e;
+}
+#revit-naming-poster .card-image,
+#revit-naming-poster .card-image img,
+#cad-drafting-poster .card-image,
+#cad-drafting-poster .card-image img {
+  aspect-ratio: 3 / 4;
+  background: #081d48;
+}
 @media (hover: hover) and (pointer: fine) {
   .card-image:hover img,
   .card-image:focus-visible img { transform: scale(1.05); }
@@ -316,6 +331,7 @@ details p { margin: .6rem 0 0; }
 @media (min-width: 768px) {
   .product-group,
   #products,
+  #extras,
   #classroom-license,
   #studio-team-license,
   #office-team-license,
