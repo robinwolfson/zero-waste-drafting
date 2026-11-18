@@ -165,7 +165,9 @@ class PermitKitCardTest(unittest.TestCase):
                 "Commercial Permit-Set QA/QC + Pre-Submittal Review Kit",
             ],
         )
-        titles = [text_of(body, "h3") for _, body in articles(HTML)]
+        # Catalog through Extras. The Lighting Controls section repeats the permit kit.
+        catalog = HTML.split('id="preview"', 1)[0]
+        titles = [text_of(body, "h3") for _, body in articles(catalog)]
         self.assertEqual(len(titles), len(set(titles)))
         self.assertEqual(len(titles), 18)
         self.assertNotIn("CAD + Revit Bundle", HTML)
@@ -177,9 +179,9 @@ class PermitKitCardTest(unittest.TestCase):
         nav = HTML.split('aria-label="Product categories"', 1)[1].split("</nav>", 1)[0]
         self.assertEqual(
             re.findall(r'href="(#[^"]+)"', nav),
-            ["#lean-six-sigma", "#cad", "#revit", "#bundles", "#commercial-permitting", "#extras"],
+            ["#lean-six-sigma", "#cad", "#revit", "#bundles", "#commercial-permitting", "#extras", "#lighting-controls"],
         )
-        for section_id in ("lean-six-sigma", "cad", "revit", "bundles", "commercial-permitting", "extras"):
+        for section_id in ("lean-six-sigma", "cad", "revit", "bundles", "commercial-permitting", "extras", "lighting-controls"):
             self.assertIn(f'id="{section_id}"', HTML)
         quiz = HTML.split('id="free-quiz"', 1)[1].split('id="free-revit-sheet"', 1)[0]
         self.assertIn("Green Belt Practice Quiz: 10 free questions", quiz)
@@ -519,8 +521,8 @@ class PermitKitCardTest(unittest.TestCase):
         self.assertEqual(covers, 12)
         self.assertEqual(title_links, 14)
         # Preview and quiz images stay plain images, not lightbox triggers.
-        preview = HTML.split('id="preview"', 1)[1]
-        self.assertNotIn("card-image", preview.split('id="products"', 1)[0] if False else preview)
+        preview = HTML.split('id="preview"', 1)[1].split("</section>", 1)[0]
+        self.assertNotIn("card-image", preview)
         self.assertIn("preview-green-belt-worked-example.jpg", preview)
         self.assertNotIn('cdn.jsdelivr', HTML + CSS + js)
         self.assertNotIn("unpkg.com", HTML + CSS + js)
@@ -546,7 +548,7 @@ class PermitKitCardTest(unittest.TestCase):
         nav = HTML.split('aria-label="Product categories"', 1)[1].split("</nav>", 1)[0]
         self.assertEqual(
             re.findall(r'href="(#[^"]+)"', nav),
-            ["#lean-six-sigma", "#cad", "#revit", "#bundles", "#commercial-permitting", "#extras"],
+            ["#lean-six-sigma", "#cad", "#revit", "#bundles", "#commercial-permitting", "#extras", "#lighting-controls"],
         )
 
 

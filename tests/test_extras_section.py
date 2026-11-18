@@ -88,6 +88,7 @@ class ExtrasSectionTest(unittest.TestCase):
                 "#products",
                 "#bundles",
                 "#extras",
+                "#lighting-controls",
                 "#free-quiz",
                 "#free-revit-sheet",
                 "#about",
@@ -104,6 +105,7 @@ class ExtrasSectionTest(unittest.TestCase):
                 "#bundles",
                 "#commercial-permitting",
                 "#extras",
+                "#lighting-controls",
             ],
         )
 
@@ -212,7 +214,7 @@ class ExtrasSectionTest(unittest.TestCase):
         self.assertIn("#drafting-scenes-calendar .card-image", CSS)
         self.assertIn("aspect-ratio: 913 / 1400", CSS)
         self.assertIn("aspect-ratio: 3 / 4", CSS)
-        self.assertIn("#products,\n#extras { scroll-margin-top: 9rem; }", CSS)
+        self.assertIn("#products,\n#extras,\n#lighting-controls { scroll-margin-top: 9rem; }", CSS)
         desktop = CSS.split("@media (min-width: 768px)", 1)[1].split("}", 1)[0]
         self.assertIn("#extras,", desktop)
         self.assertIn("scroll-margin-top: 5.5rem", desktop)
