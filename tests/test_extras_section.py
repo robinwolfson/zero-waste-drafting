@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 HTML = (ROOT / "index.html").read_text(encoding="utf-8")
 CSS = (ROOT / "styles.css").read_text(encoding="utf-8")
 
-CALENDAR_URL = "https://www.etsy.com/listing/4619766739"
+CALENDAR_URL = "https://www.etsy.com/listing/4621033798"
 POSTER_URL = "https://www.etsy.com/listing/4619695521"
 CAD_POSTER_URL = "https://www.etsy.com/listing/4620179623"
 
@@ -116,7 +116,7 @@ class ExtrasSectionTest(unittest.TestCase):
                 "price": "$36",
                 "url": CALENDAR_URL,
                 "format": "11x17 wall calendar",
-                "copy": "12 bold Revit and CAD drafting scenes, one per month, each with a Revit tip.",
+                "copy": "12 bold Revit and CAD drafting scenes, one per month, each with a Revit tip, plus US holidays and moon phases.",
                 "src": "images/2027-drafting-scenes-wall-calendar.jpg",
                 "width": 913,
                 "height": 1400,
