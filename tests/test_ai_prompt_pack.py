@@ -8,7 +8,7 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-HTML = (ROOT / "index.html").read_text(encoding="utf-8")
+HTML = (ROOT / "shop.html").read_text(encoding="utf-8")
 
 BMAC = "https://buymeacoffee.com/robinwolfson/e/599857"
 ETSY = "https://www.etsy.com/listing/4620552083/ai-prompt-pack-for-cad-and-revit"
