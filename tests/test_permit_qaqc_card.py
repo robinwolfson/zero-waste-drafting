@@ -130,6 +130,7 @@ class PermitKitCardTest(unittest.TestCase):
             [
                 "Lean Six Sigma Green Belt Study Guide + 75-Question Practice Exam",
                 "The Lean Six Sigma Toolkit",
+                "ASQ vs IASSC vs CSSC: Which Green Belt Certification Should You Actually Take?",
             ],
         )
         self.assertEqual(
@@ -139,6 +140,7 @@ class PermitKitCardTest(unittest.TestCase):
                 "Commercial AutoCAD Starter Kit",
                 "The Commercial AutoCAD Standards Pack",
                 "AI Prompt Pack for CAD and Revit Drafters",
+                "AI in AutoCAD and Revit in 2026: What It Actually Does (and Where It Still Fumbles)",
             ],
         )
         self.assertEqual(
@@ -170,7 +172,7 @@ class PermitKitCardTest(unittest.TestCase):
         catalog = HTML.split('id="preview"', 1)[0]
         titles = [text_of(body, "h3") for _, body in articles(catalog)]
         self.assertEqual(len(titles), len(set(titles)))
-        self.assertEqual(len(titles), 19)
+        self.assertEqual(len(titles), 21)
         self.assertNotIn("CAD + Revit Bundle", HTML)
         self.assertNotIn("593901", HTML)
         self.assertNotIn("4609960632", HTML)
@@ -502,6 +504,8 @@ class PermitKitCardTest(unittest.TestCase):
             heading_html = heading.group(1)
             if buy and buy[0][0].startswith("https://buymeacoffee.com/"):
                 target = buy[0][0]
+            elif buy and buy[0][0].startswith("https://medium.com/"):
+                target = buy[0][0]
             elif etsy:
                 target = etsy[0][0]
             else:
@@ -522,7 +526,7 @@ class PermitKitCardTest(unittest.TestCase):
             self.assertIn(f'href="{target}"', body)
 
         self.assertEqual(covers, 12)
-        self.assertEqual(title_links, 15)
+        self.assertEqual(title_links, 17)
         # Preview and quiz images stay plain images, not lightbox triggers.
         preview = HTML.split('id="preview"', 1)[1].split("</section>", 1)[0]
         self.assertNotIn("card-image", preview)
