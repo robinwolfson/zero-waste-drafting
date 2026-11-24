@@ -110,6 +110,9 @@ h3 { font-size: 1.2rem; }
 #products,
 #extras,
 #lighting-controls { scroll-margin-top: 9rem; }
+#articles,
+#videos,
+#articles .card { scroll-margin-top: 9rem; }
 
 /* Cards */
 .grid, .bundle-grid, .preview-grid { display: grid; gap: 1.5rem; grid-template-columns: 1fr; }
@@ -308,9 +311,20 @@ h3 { font-size: 1.2rem; }
 #florida-lighting-article .purchase-actions .btn,
 #ai-autocad-revit-article .purchase-actions .btn,
 #green-belt-certification-article .purchase-actions .btn { text-wrap: nowrap; white-space: nowrap; }
-/* Short article cards sit beside much taller product cards. Don't stretch them into an empty gap. */
-#ai-autocad-revit-article,
-#green-belt-certification-article { align-self: start; }
+/* Article buttons are longer than a price label, so they stack instead of breaking mid-word. */
+.article-card .purchase-actions { flex-direction: column; }
+.article-card .purchase-actions .btn { text-wrap: nowrap; white-space: nowrap; }
+.related-reading { margin: 1rem 0 0; font-size: .95rem; font-weight: 700; }
+.video-topic {
+  margin: 2rem 0 1rem;
+  padding-left: .75rem;
+  border-left: 4px solid var(--accent);
+  font-size: 1.35rem;
+}
+.video-topic:first-of-type { margin-top: .25rem; }
+.video-thumb { display: block; line-height: 0; background: #081d48; }
+.video-thumb img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+.video-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.75rem; }
 /* "Buy on Buy Me a Coffee — $12" is longer than "Buy for $12", so these store buttons stack. */
 #ai-prompt-pack .purchase-actions { flex-direction: column; }
 
@@ -423,7 +437,10 @@ details p { margin: .6rem 0 0; }
   #studio-team-license,
   #office-team-license,
   #team-license-quote,
-  #free-revit-sheet { scroll-margin-top: 5.5rem; }
+  #free-revit-sheet,
+  #articles,
+  #videos,
+  #articles .card { scroll-margin-top: 5.5rem; }
   .shorts-layout { grid-template-columns: minmax(0, 1.5fr) auto; gap: 2rem; }
   .episode-list { justify-content: flex-end; }
 }

@@ -1,7 +1,7 @@
-"""Article cards beside the CAD/Revit and Green Belt products.
+"""Articles section: every published article, newest first.
 
-Same shape as the Lighting Controls article: Medium title link, Medium
-primary button, Substack secondary button.
+Four pieces are on Medium and Substack. The two oldest are on Medium only;
+their Substack URLs do not exist, so those cards do not invent a Substack link.
 
 Run from the repo root: python3 -m unittest tests/test_shop_articles.py
 """
@@ -28,7 +28,39 @@ GB_MEDIUM = (
 )
 GB_SUBSTACK = "https://robinwolfson.substack.com/p/asq-vs-iassc-vs-cssc-which-green"
 GB_TITLE = "ASQ vs IASSC vs CSSC: Which Green Belt Certification Should You Actually Take?"
+FL_MEDIUM = (
+    "https://medium.com/@robinwolfson.drafting/"
+    "dont-copy-a-2021-iecc-lighting-controls-cheat-sheet-onto-a-florida-permit-set-bfe1dcf85039"
+)
+FL_SUBSTACK = "https://robinwolfson.substack.com/p/dont-copy-a-2021-iecc-lighting-controls"
+FL_TITLE = "Don\u2019t Copy a 2021 IECC Lighting-Controls Cheat Sheet onto a Florida Permit Set"
+CAD_MEDIUM = (
+    "https://medium.com/@robinwolfson.drafting/"
+    "how-to-set-up-autocad-drawing-standards-as-a-freelancer-or-small-firm-2e800366d722"
+)
+CAD_SUBSTACK = "https://robinwolfson.substack.com/p/how-to-set-up-autocad-drawing-standards"
+CAD_TITLE = "How to Set Up AutoCAD Drawing Standards as a Freelancer or Small Firm"
+REVIT_MEDIUM = (
+    "https://medium.com/@robinwolfson.drafting/"
+    "revit-naming-standards-for-small-firms-views-sheets-families-and-files-f4ad03afa216"
+)
+REVIT_TITLE = "Revit Naming Standards for Small Firms: Views, Sheets, Families, and Files"
+EXAM_MEDIUM = (
+    "https://medium.com/@robinwolfson.drafting/"
+    "how-to-pass-the-lean-six-sigma-green-belt-exam-without-a-500-page-textbook-7b997f7facf3"
+)
+EXAM_TITLE = "How to Pass the Lean Six Sigma Green Belt Exam Without a 500-Page Textbook"
 BANNED_CHECKOUTS = ("/e/593903", "/e/593901", "/e/593132")
+
+# Newest first. substack is None when Robin has not published that piece there.
+PUBLISHED = (
+    ("green-belt-certification-article", GB_TITLE, "Green Belt certification", GB_MEDIUM, GB_SUBSTACK),
+    ("ai-autocad-revit-article", AI_TITLE, "AutoCAD and Revit", AI_MEDIUM, AI_SUBSTACK),
+    ("florida-lighting-article", FL_TITLE, "Florida permit sets", FL_MEDIUM, FL_SUBSTACK),
+    ("autocad-standards-article", CAD_TITLE, "AutoCAD standards", CAD_MEDIUM, CAD_SUBSTACK),
+    ("revit-naming-article", REVIT_TITLE, "Revit naming", REVIT_MEDIUM, None),
+    ("green-belt-exam-article", EXAM_TITLE, "Green Belt exam", EXAM_MEDIUM, None),
+)
 
 
 def articles(html):
@@ -55,62 +87,92 @@ def hrefs(fragment, class_name):
     return re.findall(rf'<a class="{class_name}" href="([^"]+)"([^>]*)>', fragment)
 
 
-class ShopArticleCardsTest(unittest.TestCase):
+class ArticlesSectionTest(unittest.TestCase):
     def setUp(self):
-        self.cards = {attr(attrs, "id"): body for attrs, body in articles(HTML)}
-        self.products = HTML.split('id="products"', 1)[1].split('id="extras"', 1)[0]
-        self.lean = self.products.split('id="lean-six-sigma"', 1)[1].split('id="cad"', 1)[0]
-        self.cad = self.products.split('id="cad"', 1)[1].split('id="revit"', 1)[0]
+        self.section = HTML.split('id="articles"', 1)[1].split('id="videos"', 1)[0]
+        self.cards = [(attr(attrs, "id"), body) for attrs, body in articles(self.section)]
+        self.by_id = {card_id: body for card_id, body in self.cards}
 
-    def assert_article(self, card, title, medium, substack):
-        self.assertEqual(text_of(card, "h3"), title)
-        self.assertIn("Article on Medium and Substack", card)
-        self.assertIn(">Article<", card)
-        self.assertIn(">Medium &amp; Substack<", card)
-        self.assertNotIn('class="price"', card)
-        self.assertNotIn("buymeacoffee.com", card)
-        self.assertNotIn("<img", card)
-        primary = hrefs(card, "btn btn-primary")
-        secondary = hrefs(card, "btn btn-secondary")
-        title_link = hrefs(card, "card-title-link")
-        self.assertEqual([href for href, _ in primary], [medium])
-        self.assertEqual([href for href, _ in secondary], [substack])
-        self.assertEqual([href for href, _ in title_link], [medium])
-        self.assertIn("Read on Medium", card)
-        self.assertIn("Read on Substack", card)
-        for _, extra in primary + secondary + title_link:
-            self.assertIn('target="_blank"', extra)
-            self.assertIn('rel="noopener"', extra)
+    def test_section_sits_in_the_nav_after_lighting_controls(self):
+        self.assertLess(HTML.index('id="lighting-controls"'), HTML.index('id="articles"'))
+        self.assertLess(HTML.index('id="articles"'), HTML.index('id="videos"'))
+        self.assertLess(HTML.index('id="videos"'), HTML.index('id="free-quiz"'))
+        self.assertLess(HTML.index('id="free-quiz"'), HTML.index('id="faq"'))
+        self.assertEqual(text_of(self.section, "h2"), "Articles")
+        self.assertIn(
+            "Field notes on Lean Six Sigma, commercial CAD and Revit, and Florida lighting controls.",
+            self.section,
+        )
+        header = HTML.split('aria-label="Main"', 1)[1].split("</nav>", 1)[0]
+        self.assertEqual(
+            re.findall(r'href="(#[^"]+)"', header),
+            [
+                "#products",
+                "#bundles",
+                "#extras",
+                "#lighting-controls",
+                "#articles",
+                "#videos",
+                "#free-quiz",
+                "#free-revit-sheet",
+                "#about",
+                "#faq",
+            ],
+        )
+        self.assertIn('class="grid"', self.section)
+        self.assertIn("#articles,\n#videos,", CSS)
+        self.assertIn(".article-card .purchase-actions { flex-direction: column; }", CSS)
+        self.assertIn("grid-template-columns: repeat(2, 1fr)", CSS)
+        self.assertIn(".grid > .card { grid-column: span 2; }", CSS)
 
-    def test_ai_article_sits_with_the_cad_products(self):
-        card = self.cards["ai-autocad-revit-article"]
-        self.assertIn(card, self.cad)
-        self.assertLess(self.cad.index('id="ai-prompt-pack"'), self.cad.index('id="ai-autocad-revit-article"'))
-        self.assertLess(
-            self.products.index('id="ai-autocad-revit-article"'),
-            self.products.index('id="revit"'),
-        )
-        self.assertNotIn('id="ai-autocad-revit-article"', self.lean)
-        self.assert_article(card, AI_TITLE, AI_MEDIUM, AI_SUBSTACK)
-        self.assertIn(">AutoCAD and Revit<", card)
-        self.assertIn("#ai-autocad-revit-article .purchase-actions,", CSS)
+    def test_cards_are_newest_first_and_not_duplicated(self):
+        self.assertEqual([card_id for card_id, _ in self.cards], [row[0] for row in PUBLISHED])
+        for card_id, title, topic, medium, substack in PUBLISHED:
+            self.assertEqual(HTML.count(f'id="{card_id}"'), 1, card_id)
+            card = self.by_id[card_id]
+            self.assertEqual(text_of(card, "h3"), title)
+            self.assertIn(">Article<", card)
+            self.assertIn(f">{topic}<", card)
+            self.assertNotIn('class="price"', card)
+            self.assertNotIn("buymeacoffee.com", card)
+            self.assertNotIn("<img", card)
+            self.assertIn('class="license-banner"', card)
+            primary = hrefs(card, "btn btn-primary")
+            title_link = hrefs(card, "card-title-link")
+            self.assertEqual([href for href, _ in primary], [medium])
+            self.assertEqual([href for href, _ in title_link], [medium])
+            self.assertIn("Read on Medium", card)
+            if substack:
+                secondary = hrefs(card, "btn btn-secondary")
+                self.assertEqual([href for href, _ in secondary], [substack])
+                self.assertIn(">Medium &amp; Substack<", card)
+                self.assertIn("Article on Medium and Substack", card)
+                self.assertIn("Read on Substack", card)
+                linked = primary + secondary + title_link
+            else:
+                self.assertNotIn("substack.com", card)
+                self.assertNotIn("btn-secondary", card)
+                self.assertIn(">Medium<", card)
+                self.assertIn(">Article on Medium<", card)
+                self.assertNotIn("Read on Substack", card)
+                linked = primary + title_link
+            for _, extra in linked:
+                self.assertIn('target="_blank"', extra)
+                self.assertIn('rel="noopener"', extra)
 
-    def test_green_belt_article_sits_with_the_study_products(self):
-        card = self.cards["green-belt-certification-article"]
-        self.assertIn(card, self.lean)
-        self.assertLess(
-            self.lean.index("The Lean Six Sigma Toolkit"),
-            self.lean.index('id="green-belt-certification-article"'),
-        )
-        self.assertLess(
-            self.products.index('id="green-belt-certification-article"'),
-            self.products.index('id="cad"'),
-        )
-        self.assertNotIn('id="green-belt-certification-article"', self.cad)
-        self.assert_article(card, GB_TITLE, GB_MEDIUM, GB_SUBSTACK)
-        self.assertIn(">Green Belt certification<", card)
-        self.assertIn("#green-belt-certification-article .purchase-actions { flex-direction: column; }", CSS)
-        self.assertIn("#green-belt-certification-article { align-self: start; }", CSS)
+    def test_product_sections_keep_a_text_link_instead_of_the_card(self):
+        lean = HTML.split('id="lean-six-sigma"', 1)[1].split('id="cad"', 1)[0]
+        cad = HTML.split('id="cad"', 1)[1].split('id="revit"', 1)[0]
+        lighting = HTML.split('id="lighting-controls"', 1)[1].split('id="articles"', 1)[0]
+        self.assertNotIn('id="green-belt-certification-article"', lean)
+        self.assertNotIn('id="ai-autocad-revit-article"', cad)
+        self.assertNotIn('id="florida-lighting-article"', lighting)
+        self.assertIn('href="#green-belt-certification-article"', lean)
+        self.assertIn('href="#ai-autocad-revit-article"', cad)
+        self.assertIn('href="#florida-lighting-article"', lighting)
+        for fragment in (lean, cad, lighting):
+            self.assertEqual(fragment.count(">Read the related article<"), 1)
+            self.assertIn('class="related-reading"', fragment)
 
     def test_banned_checkouts_stay_off_the_page(self):
         for path in BANNED_CHECKOUTS:

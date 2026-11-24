@@ -19,7 +19,7 @@ SUBSTACK = "https://robinwolfson.substack.com/p/dont-copy-a-2021-iecc-lighting-c
 BMAC = "https://buymeacoffee.com/robinwolfson/e/595488"
 ETSY = "https://www.etsy.com/listing/4611461235"
 YOUTUBE = "https://www.youtube.com/@ZeroWasteDrafting"
-ARTICLE = "Don't copy a 2021 IECC lighting controls cheat sheet onto a Florida permit set"
+ARTICLE = "Don\u2019t Copy a 2021 IECC Lighting-Controls Cheat Sheet onto a Florida Permit Set"
 DISCLAIMER = (
     "Educational summary, not a substitute for the adopted Florida Energy Conservation Code or your AHJ."
 )
@@ -107,7 +107,14 @@ class LightingControlsSectionTest(unittest.TestCase):
                 self.assertIn('rel="noopener"', extra)
 
     def test_article_links(self):
-        card = self.cards["florida-lighting-article"]
+        articles_section = HTML.split('id="articles"', 1)[1].split('id="videos"', 1)[0]
+        card = {attr(attrs, "id"): body for attrs, body in articles(articles_section)}[
+            "florida-lighting-article"
+        ]
+        lighting_only = self.section.split('id="articles"', 1)[0]
+        self.assertNotIn('id="florida-lighting-article"', lighting_only)
+        self.assertIn('href="#florida-lighting-article"', lighting_only)
+        self.assertIn(">Read the related article<", lighting_only)
         self.assertEqual(text_of(card, "h3"), ARTICLE)
         primary = hrefs(card, "btn btn-primary")
         secondary = hrefs(card, "btn btn-secondary")
