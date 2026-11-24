@@ -68,7 +68,8 @@ def hrefs(fragment, class_name):
 class LightingControlsSectionTest(unittest.TestCase):
     def setUp(self):
         self.section = HTML.split('id="lighting-controls"', 1)[1].split("<footer", 1)[0]
-        self.videos = LEARN.split('id="videos"', 1)[1].split('id="related-title"', 1)[0]
+        panel = self.section.split('<div class="shorts-panel">', 1)[1].split('<p class="related-reading">', 1)[0]
+        self.videos = '<div class="shorts-panel">' + panel
         self.cards = {attr(attrs, "id"): body for attrs, body in articles(self.section + LEARN)}
         # The episode example is a comment, not a live link.
         self.live = re.sub(r"<!--.*?-->", "", self.videos, flags=re.S)
@@ -112,14 +113,10 @@ class LightingControlsSectionTest(unittest.TestCase):
                 self.assertIn('rel="noopener"', extra)
 
     def test_article_links(self):
-        articles_section = HTML.split('id="articles"', 1)[1].split('id="videos"', 1)[0]
-        card = {attr(attrs, "id"): body for attrs, body in articles(articles_section)}[
-            "florida-lighting-article"
-        ]
-        lighting_only = self.section.split('id="articles"', 1)[0]
-        self.assertNotIn('id="florida-lighting-article"', lighting_only)
-        self.assertIn('href="#florida-lighting-article"', lighting_only)
-        self.assertIn(">Read the related article<", lighting_only)
+        card = self.cards["florida-lighting-article"]
+        self.assertNotIn('id="florida-lighting-article"', self.section)
+        self.assertIn('href="learn.html#florida-lighting-article"', self.section)
+        self.assertIn(">Read the related article<", self.section)
         self.assertEqual(text_of(card, "h3"), ARTICLE)
         primary = hrefs(card, "btn btn-primary")
         secondary = hrefs(card, "btn btn-secondary")

@@ -11,6 +11,14 @@
     articles: learn + "#articles",
     videos: learn + "#videos",
     "florida-lighting-article": learn + "#florida-lighting-article",
+    "green-belt-certification-article": learn + "#green-belt-certification-article",
+    "ai-autocad-revit-article": learn + "#ai-autocad-revit-article",
+    "autocad-standards-article": learn + "#autocad-standards-article",
+    "revit-naming-article": learn + "#revit-naming-article",
+    "green-belt-exam-article": learn + "#green-belt-exam-article",
+    "videos-lean": learn + "#videos-lean",
+    "videos-cad": learn + "#videos-cad",
+    "lighting-shorts": learn + "#lighting-shorts",
     "free-quiz": free + "#free-quiz",
     "free-revit-sheet": free + "#free-revit-sheet",
     about: home + "#about",
@@ -19,6 +27,24 @@
     "start-free": home + "#start-free",
     newsletter: home + "#free-revit-sheet"
   };
+
+  [
+    "video-_gbqWsdQsKs",
+    "video-SZTEeWy7mQg",
+    "video--il07SqjbUs",
+    "video-cKwAS7rdQgo",
+    "video-Cwk2REDGxJk",
+    "video-prBmRY3U4S0",
+    "video-yW8NzI9pf68",
+    "video-noAW4EDjARg",
+    "video-I3tNTx1TU2Y",
+    "video-cD8n8tNSbCY",
+    "video-KCSBgGuxyEg",
+    "video-yJJRLVAYKHA",
+    "video-QLCF0EfdhRA"
+  ].forEach(function (id) {
+    map[id] = learn + "#" + id;
+  });
 
   [
     "products", "extras", "lighting-controls", "bundles", "lean-six-sigma", "cad", "revit",

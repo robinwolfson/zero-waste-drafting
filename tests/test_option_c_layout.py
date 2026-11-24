@@ -248,11 +248,17 @@ class OptionCLayoutTest(unittest.TestCase):
             self.assertIn('data-form="8TQkZA"', html)
             self.assertIn("Commercial Revit naming cheat sheet", html)
             self.assertIn("ml('account', '2771828')", html)
-            self.assertIn(medium, html)
-            self.assertIn(substack, html)
             self.assertIn("https://www.youtube.com/@ZeroWasteDrafting", html)
-            for short in shorts:
-                self.assertIn(short, html)
+        self.assertIn(
+            "asq-vs-iassc-vs-cssc-which-green-belt-certification-should-you-actually-take-8d0041754f11",
+            HOME,
+        )
+        self.assertIn("https://www.youtube.com/watch?v=_gbqWsdQsKs", HOME)
+        self.assertIn(medium, FREE)
+        self.assertIn(substack, FREE)
+        for short in shorts:
+            self.assertIn(short, FREE)
+        self.assertIn("https://youtube.com/shorts/ZFQOWlmhil4", FREE)
         self.assertIn('id="start-free"', HOME)
         self.assertIn('id="free-quiz"', FREE)
         self.assertIn('id="free-revit-sheet"', HOME)
@@ -265,20 +271,19 @@ class OptionCLayoutTest(unittest.TestCase):
     def test_articles_and_videos_keep_current_content(self):
         articles_html = LEARN.split('id="articles"', 1)[1].split('id="videos"', 1)[0]
         videos = LEARN.split('id="videos"', 1)[1]
-        self.assertIn(
-            "Don't copy a 2021 IECC lighting controls cheat sheet onto a Florida permit set",
-            articles_html,
-        )
+        self.assertIn("ASQ vs IASSC vs CSSC: Which Green Belt Certification Should You Actually Take?", articles_html)
+        self.assertEqual(len(set(re.findall(r"https://medium.com/@robinwolfson\.drafting/[a-z0-9-]+", LEARN))), 6)
+        self.assertEqual(len(set(re.findall(r"youtube\.com/watch\?v=([A-Za-z0-9_-]+)", LEARN))), 13)
+        self.assertIn("ZFQOWlmhil4", LEARN)
         self.assertIn("Read on Medium", articles_html)
         self.assertIn("Read on Substack", articles_html)
-        self.assertIn("Florida Lighting Controls in 30 Seconds", videos)
-        self.assertIn("More episodes coming", videos)
+        self.assertIn("Video Tutorials", videos)
+        self.assertIn("Florida Lighting Controls in 30 Seconds", LEARN)
+        self.assertIn("More episodes coming", LEARN)
         self.assertIn(
             '<li><a href="https://www.youtube.com/shorts/VIDEO_ID">Episode title</a></li>',
-            videos,
+            LEARN,
         )
-        self.assertNotIn("asq-vs-iassc", LEARN.lower())
-        self.assertNotIn("ZFQOWlmhil4", ALL)
         self.assertIn('id="faq"', HOME)
         self.assertIn("Physical print-on-demand items, sold only on Etsy.", SHOP)
         self.assertIn('id="preview"', SHOP)
