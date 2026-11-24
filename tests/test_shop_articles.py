@@ -11,7 +11,10 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-HTML = (ROOT / "index.html").read_text(encoding="utf-8")
+HTML = (ROOT / "learn.html").read_text(encoding="utf-8")
+SHOP = (ROOT / "shop.html").read_text(encoding="utf-8")
+FREE = (ROOT / "free.html").read_text(encoding="utf-8")
+HOME = (ROOT / "index.html").read_text(encoding="utf-8")
 CSS = (ROOT / "styles.css").read_text(encoding="utf-8")
 
 AI_MEDIUM = (
@@ -94,10 +97,11 @@ class ArticlesSectionTest(unittest.TestCase):
         self.by_id = {card_id: body for card_id, body in self.cards}
 
     def test_section_sits_in_the_nav_after_lighting_controls(self):
-        self.assertLess(HTML.index('id="lighting-controls"'), HTML.index('id="articles"'))
         self.assertLess(HTML.index('id="articles"'), HTML.index('id="videos"'))
-        self.assertLess(HTML.index('id="videos"'), HTML.index('id="free-quiz"'))
-        self.assertLess(HTML.index('id="free-quiz"'), HTML.index('id="faq"'))
+        self.assertLess(HTML.index('id="videos"'), HTML.index('id="lighting-shorts"'))
+        self.assertIn('id="free-quiz"', FREE)
+        self.assertIn('id="faq"', HOME)
+        self.assertLess(SHOP.index('id="lighting-controls"'), SHOP.index("<footer"))
         self.assertEqual(text_of(self.section, "h2"), "Articles")
         self.assertIn(
             "Field notes on Lean Six Sigma, commercial CAD and Revit, and Florida lighting controls.",
@@ -105,19 +109,8 @@ class ArticlesSectionTest(unittest.TestCase):
         )
         header = HTML.split('aria-label="Main"', 1)[1].split("</nav>", 1)[0]
         self.assertEqual(
-            re.findall(r'href="(#[^"]+)"', header),
-            [
-                "#products",
-                "#bundles",
-                "#extras",
-                "#lighting-controls",
-                "#articles",
-                "#videos",
-                "#free-quiz",
-                "#free-revit-sheet",
-                "#about",
-                "#faq",
-            ],
+            re.findall(r'href="([^"]+)"', header),
+            ["index.html", "shop.html", "free.html", "learn.html"],
         )
         self.assertIn('class="grid"', self.section)
         self.assertIn("#articles,\n#videos,", CSS)
@@ -161,19 +154,20 @@ class ArticlesSectionTest(unittest.TestCase):
                 self.assertIn('rel="noopener"', extra)
 
     def test_product_sections_keep_a_text_link_instead_of_the_card(self):
-        lean = HTML.split('id="lean-six-sigma"', 1)[1].split('id="cad"', 1)[0]
-        cad = HTML.split('id="cad"', 1)[1].split('id="revit"', 1)[0]
-        lighting = HTML.split('id="lighting-controls"', 1)[1].split('id="articles"', 1)[0]
+        lean = SHOP.split('id="lean-six-sigma"', 1)[1].split('id="cad"', 1)[0]
+        cad = SHOP.split('id="cad"', 1)[1].split('id="revit"', 1)[0]
+        lighting = SHOP.split('id="lighting-controls"', 1)[1].split("<footer", 1)[0]
         self.assertNotIn('id="green-belt-certification-article"', lean)
         self.assertNotIn('id="ai-autocad-revit-article"', cad)
         self.assertNotIn('id="florida-lighting-article"', lighting)
-        self.assertIn('href="#green-belt-certification-article"', lean)
-        self.assertIn('href="#ai-autocad-revit-article"', cad)
-        self.assertIn('href="#florida-lighting-article"', lighting)
+        self.assertIn('href="learn.html#green-belt-certification-article"', lean)
+        self.assertIn('href="learn.html#ai-autocad-revit-article"', cad)
+        self.assertIn('href="learn.html#florida-lighting-article"', lighting)
         for fragment in (lean, cad, lighting):
             self.assertEqual(fragment.count(">Read the related article<"), 1)
             self.assertIn('class="related-reading"', fragment)
 
     def test_banned_checkouts_stay_off_the_page(self):
         for path in BANNED_CHECKOUTS:
-            self.assertNotIn(path, HTML)
+            for page in (HTML, SHOP, FREE, HOME):
+                self.assertNotIn(path, page)

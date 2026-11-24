@@ -11,7 +11,7 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-HTML = (ROOT / "index.html").read_text(encoding="utf-8")
+HTML = (ROOT / "learn.html").read_text(encoding="utf-8")
 CSS = (ROOT / "styles.css").read_text(encoding="utf-8")
 
 CHANNEL = "https://www.youtube.com/@ZeroWasteDrafting"
@@ -57,21 +57,22 @@ def text_of(fragment, tag):
 
 class VideoTutorialsTest(unittest.TestCase):
     def setUp(self):
-        self.section = HTML.split('id="videos"', 1)[1].split('id="free-quiz"', 1)[0]
+        self.section = HTML.split('id="videos"', 1)[1].split('id="lighting-shorts"', 1)[0]
         self.cards = [(attr(attrs, "id"), body) for attrs, body in articles(self.section)]
 
     def test_section_and_nav_sit_beside_articles(self):
         self.assertLess(HTML.index('id="articles"'), HTML.index('id="videos"'))
-        self.assertLess(HTML.index('id="videos"'), HTML.index('id="free-quiz"'))
+        self.assertLess(HTML.index('id="videos"'), HTML.index('id="lighting-shorts"'))
+        self.assertIn('id="free-quiz"', (ROOT / "free.html").read_text(encoding="utf-8"))
         self.assertEqual(text_of(self.section, "h2"), "Video Tutorials")
         self.assertIn(
             "Full-length YouTube tutorials on Lean Six Sigma and commercial CAD and Revit.",
             self.section,
         )
         header = HTML.split('aria-label="Main"', 1)[1].split("</nav>", 1)[0]
-        hrefs = re.findall(r'href="(#[^"]+)"', header)
-        self.assertLess(hrefs.index("#articles"), hrefs.index("#videos"))
-        self.assertLess(hrefs.index("#videos"), hrefs.index("#faq"))
+        hrefs = re.findall(r'href="([^"]+)"', header)
+        self.assertIn("learn.html", hrefs)
+        self.assertIn("index.html", hrefs)
         topics = re.findall(r'class="video-topic"[^>]*>(.*?)</h3>', self.section)
         self.assertEqual([plain(topic) for topic in topics], ["Lean Six Sigma", "CAD & Revit"])
         self.assertIn(".video-thumb img", CSS)

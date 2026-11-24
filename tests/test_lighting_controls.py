@@ -8,7 +8,8 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-HTML = (ROOT / "index.html").read_text(encoding="utf-8")
+HTML = (ROOT / "shop.html").read_text(encoding="utf-8")
+LEARN = (ROOT / "learn.html").read_text(encoding="utf-8")
 CSS = (ROOT / "styles.css").read_text(encoding="utf-8")
 
 MEDIUM = (
@@ -66,28 +67,33 @@ def hrefs(fragment, class_name):
 
 class LightingControlsSectionTest(unittest.TestCase):
     def setUp(self):
-        self.section = HTML.split('id="lighting-controls"', 1)[1].split('id="free-quiz"', 1)[0]
-        self.cards = {attr(attrs, "id"): body for attrs, body in articles(self.section)}
+        self.section = HTML.split('id="lighting-controls"', 1)[1].split("<footer", 1)[0]
+        panel = self.section.split('<div class="shorts-panel">', 1)[1].split('<p class="related-reading">', 1)[0]
+        self.videos = '<div class="shorts-panel">' + panel
+        self.cards = {attr(attrs, "id"): body for attrs, body in articles(self.section + LEARN)}
         # The episode example is a comment, not a live link.
-        self.live = re.sub(r"<!--.*?-->", "", self.section, flags=re.S)
+        self.live = re.sub(r"<!--.*?-->", "", self.videos, flags=re.S)
 
     def test_section_order_and_nav(self):
         self.assertLess(HTML.index('id="preview"'), HTML.index('id="lighting-controls"'))
-        self.assertLess(HTML.index('id="lighting-controls"'), HTML.index('id="free-quiz"'))
+        free = (ROOT / "free.html").read_text(encoding="utf-8")
+        self.assertIn('id="free-quiz"', free)
         self.assertIn("Lighting Controls", text_of(self.section, "h2"))
         self.assertIn("Florida commercial lighting controls for drafters and designers.", self.section)
+        self.assertIn('href="learn.html#articles"', self.section)
+        self.assertIn('href="learn.html#videos"', self.section)
         header = HTML.split('aria-label="Main"', 1)[1].split("</nav>", 1)[0]
         categories = HTML.split('aria-label="Product categories"', 1)[1].split("</nav>", 1)[0]
-        self.assertIn('href="#lighting-controls"', header)
+        self.assertIn('href="learn.html"', header)
         self.assertIn('href="#lighting-controls"', categories)
         self.assertIn("#lighting-controls { scroll-margin-top: 9rem; }", CSS)
         desktop = CSS.split("@media (min-width: 768px)", 1)[1].split("}", 1)[0]
         self.assertIn("#lighting-controls,", desktop)
 
     def test_shorts_shelf_lists_episode_one(self):
-        self.assertIn("Florida Lighting Controls in 30 Seconds", self.section)
-        self.assertIn("A series of 30-second YouTube Shorts. More episodes are coming.", self.section)
-        self.assertIn(EPISODE_LINE, self.section)
+        self.assertIn("Florida Lighting Controls in 30 Seconds", self.videos)
+        self.assertIn("A series of 30-second YouTube Shorts. More episodes are coming.", self.videos)
+        self.assertIn(EPISODE_LINE, self.videos)
         episodes = self.live.split('class="episode-list"', 1)[1].split("</ol>", 1)[0]
         soon = '<li><span class="episode-soon">More episodes coming</span></li>'
         self.assertIn(EPISODE_1, episodes)
@@ -99,7 +105,7 @@ class LightingControlsSectionTest(unittest.TestCase):
         self.assertEqual(episodes.count("<li>"), 4)
         self.assertIn(".episode-list a", CSS)
         self.assertIn(".episode-soon", CSS)
-        youtube = hrefs(self.live, "btn btn-primary")
+        youtube = hrefs(self.videos, "btn btn-primary")
         self.assertIn(YOUTUBE, [href for href, _ in youtube])
         for href, extra in youtube:
             if href == YOUTUBE:
@@ -107,14 +113,10 @@ class LightingControlsSectionTest(unittest.TestCase):
                 self.assertIn('rel="noopener"', extra)
 
     def test_article_links(self):
-        articles_section = HTML.split('id="articles"', 1)[1].split('id="videos"', 1)[0]
-        card = {attr(attrs, "id"): body for attrs, body in articles(articles_section)}[
-            "florida-lighting-article"
-        ]
-        lighting_only = self.section.split('id="articles"', 1)[0]
-        self.assertNotIn('id="florida-lighting-article"', lighting_only)
-        self.assertIn('href="#florida-lighting-article"', lighting_only)
-        self.assertIn(">Read the related article<", lighting_only)
+        card = self.cards["florida-lighting-article"]
+        self.assertNotIn('id="florida-lighting-article"', self.section)
+        self.assertIn('href="learn.html#florida-lighting-article"', self.section)
+        self.assertIn(">Read the related article<", self.section)
         self.assertEqual(text_of(card, "h3"), ARTICLE)
         primary = hrefs(card, "btn btn-primary")
         secondary = hrefs(card, "btn btn-secondary")
@@ -169,8 +171,16 @@ class LightingControlsSectionTest(unittest.TestCase):
     def test_live_links_are_absolute(self):
         for href in re.findall(r'href="([^"]+)"', self.live):
             if href.startswith("#"):
-                self.assertIn(f'id="{href[1:]}"', HTML)
+                self.assertIn(f'id="{href[1:]}"', LEARN)
                 continue
             self.assertTrue(href.startswith("https://"), href)
             self.assertNotIn("VIDEO_ID", href)
             self.assertNotEqual(href, "https://")
+        for href in re.findall(r'href="([^"]+)"', self.section):
+            if href.startswith("#"):
+                self.assertIn(f'id="{href[1:]}"', HTML)
+                continue
+            if href.startswith("learn.html#"):
+                self.assertIn(f'id="{href.split("#", 1)[1]}"', LEARN)
+                continue
+            self.assertTrue(href.startswith("https://"), href)

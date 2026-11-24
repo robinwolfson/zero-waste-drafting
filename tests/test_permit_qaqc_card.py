@@ -9,7 +9,8 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-HTML = (ROOT / "index.html").read_text(encoding="utf-8")
+HTML = (ROOT / "shop.html").read_text(encoding="utf-8")
+FREE = (ROOT / "free.html").read_text(encoding="utf-8")
 CSS = (ROOT / "styles.css").read_text(encoding="utf-8")
 
 # Buy Me a Coffee prices and checkouts already on the site. The new card must
@@ -128,6 +129,7 @@ class PermitKitCardTest(unittest.TestCase):
         self.assertEqual(
             self.titles_between("lean-six-sigma", "cad"),
             [
+                "Green Belt Practice Quiz: 10 free questions",
                 "Lean Six Sigma Green Belt Study Guide + 75-Question Practice Exam",
                 "The Lean Six Sigma Toolkit",
             ],
@@ -170,7 +172,7 @@ class PermitKitCardTest(unittest.TestCase):
         catalog = HTML.split('id="preview"', 1)[0]
         titles = [text_of(body, "h3") for _, body in articles(catalog)]
         self.assertEqual(len(titles), len(set(titles)))
-        self.assertEqual(len(titles), 19)
+        self.assertEqual(len(titles), 20)
         self.assertNotIn("CAD + Revit Bundle", HTML)
         self.assertNotIn("593901", HTML)
         self.assertNotIn("4609960632", HTML)
@@ -184,7 +186,7 @@ class PermitKitCardTest(unittest.TestCase):
         )
         for section_id in ("lean-six-sigma", "cad", "revit", "bundles", "commercial-permitting", "extras", "lighting-controls"):
             self.assertIn(f'id="{section_id}"', HTML)
-        quiz = HTML.split('id="free-quiz"', 1)[1].split('id="free-revit-sheet"', 1)[0]
+        quiz = FREE.split('id="free-quiz"', 1)[1].split('id="free-revit-sheet"', 1)[0]
         self.assertIn("Green Belt Practice Quiz: 10 free questions", quiz)
         self.assertNotIn("<article", quiz)
 
@@ -523,8 +525,8 @@ class PermitKitCardTest(unittest.TestCase):
             # Buy buttons still use the original store URLs and are separate from the title.
             self.assertIn(f'href="{target}"', body)
 
-        self.assertEqual(covers, 12)
-        self.assertEqual(title_links, 15)
+        self.assertEqual(covers, 13)
+        self.assertEqual(title_links, 16)
         # Preview and quiz images stay plain images, not lightbox triggers.
         preview = HTML.split('id="preview"', 1)[1].split("</section>", 1)[0]
         self.assertNotIn("card-image", preview)

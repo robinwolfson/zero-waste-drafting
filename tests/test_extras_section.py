@@ -9,7 +9,8 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-HTML = (ROOT / "index.html").read_text(encoding="utf-8")
+HTML = (ROOT / "shop.html").read_text(encoding="utf-8")
+HOME = (ROOT / "index.html").read_text(encoding="utf-8")
 CSS = (ROOT / "styles.css").read_text(encoding="utf-8")
 
 CALENDAR_URL = "https://www.etsy.com/listing/4621033798"
@@ -83,19 +84,8 @@ class ExtrasSectionTest(unittest.TestCase):
     def test_nav_links_keep_existing_order_and_add_extras(self):
         header = HTML.split('aria-label="Main"', 1)[1].split("</nav>", 1)[0]
         self.assertEqual(
-            re.findall(r'href="(#[^"]+)"', header),
-            [
-                "#products",
-                "#bundles",
-                "#extras",
-                "#lighting-controls",
-                "#articles",
-                "#videos",
-                "#free-quiz",
-                "#free-revit-sheet",
-                "#about",
-                "#faq",
-            ],
+            re.findall(r'href="([^"]+)"', header),
+            ["index.html", "shop.html", "free.html", "learn.html"],
         )
         categories = HTML.split('aria-label="Product categories"', 1)[1].split("</nav>", 1)[0]
         self.assertEqual(
@@ -222,8 +212,9 @@ class ExtrasSectionTest(unittest.TestCase):
         self.assertIn("scroll-margin-top: 5.5rem", desktop)
 
     def test_faq_covers_digital_downloads_and_shipped_prints(self):
-        faq = HTML.split('id="faq"', 1)[1]
+        faq = HOME.split('id="faq"', 1)[1]
         delivery = faq.split("How do I get my files?", 1)[1].split("</details>", 1)[0]
+        self.assertNotIn("Nothing is shipped", HOME)
         self.assertNotIn("Nothing is shipped", HTML)
         self.assertIn("instant digital downloads through Buy Me a Coffee", delivery)
         self.assertIn("After checkout you download the files right away.", delivery)
