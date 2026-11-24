@@ -89,6 +89,8 @@ class ExtrasSectionTest(unittest.TestCase):
                 "#bundles",
                 "#extras",
                 "#lighting-controls",
+                "#articles",
+                "#videos",
                 "#free-quiz",
                 "#free-revit-sheet",
                 "#about",
