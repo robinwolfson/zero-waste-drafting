@@ -30,6 +30,9 @@ EPISODE_1 = f'<li><a href="{EPISODE_1_HREF}">{EPISODE_1_TITLE}</a></li>'
 EPISODE_2_HREF = "https://youtube.com/shorts/R9B15oZF_Rk"
 EPISODE_2_TITLE = "Florida Lighting Controls: Is Plug-Load Control Required?"
 EPISODE_2 = f'<li><a href="{EPISODE_2_HREF}">{EPISODE_2_TITLE}</a></li>'
+EPISODE_3_HREF = "https://youtube.com/shorts/ZFQOWlmhil4"
+EPISODE_3_TITLE = "Florida Lighting Controls: Is the Secondary Sidelit Zone Required?"
+EPISODE_3 = f'<li><a href="{EPISODE_3_HREF}">{EPISODE_3_TITLE}</a></li>'
 
 
 def articles(html):
@@ -89,9 +92,11 @@ class LightingControlsSectionTest(unittest.TestCase):
         soon = '<li><span class="episode-soon">More episodes coming</span></li>'
         self.assertIn(EPISODE_1, episodes)
         self.assertIn(EPISODE_2, episodes)
+        self.assertIn(EPISODE_3, episodes)
         self.assertLess(episodes.index(EPISODE_1), episodes.index(EPISODE_2))
-        self.assertLess(episodes.index(EPISODE_2), episodes.index(soon))
-        self.assertEqual(episodes.count("<li>"), 3)
+        self.assertLess(episodes.index(EPISODE_2), episodes.index(EPISODE_3))
+        self.assertLess(episodes.index(EPISODE_3), episodes.index(soon))
+        self.assertEqual(episodes.count("<li>"), 4)
         self.assertIn(".episode-list a", CSS)
         self.assertIn(".episode-soon", CSS)
         youtube = hrefs(self.live, "btn btn-primary")
@@ -151,6 +156,7 @@ class LightingControlsSectionTest(unittest.TestCase):
             self.assertNotIn(phrase, self.section)
         self.assertIn(EPISODE_1_HREF, self.live)
         self.assertIn(EPISODE_2_HREF, self.live)
+        self.assertIn(EPISODE_3_HREF, self.live)
         self.assertNotIn("VIDEO_ID", self.live)
 
     def test_live_links_are_absolute(self):
