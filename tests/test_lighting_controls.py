@@ -8,8 +8,8 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-HTML = (ROOT / "shop.html").read_text(encoding="utf-8")
-LEARN = (ROOT / "learn.html").read_text(encoding="utf-8")
+HTML = (ROOT / "index.html").read_text(encoding="utf-8")
+LEARN = HTML
 CSS = (ROOT / "styles.css").read_text(encoding="utf-8")
 
 MEDIUM = (
@@ -67,7 +67,7 @@ def hrefs(fragment, class_name):
 
 class LightingControlsSectionTest(unittest.TestCase):
     def setUp(self):
-        self.section = HTML.split('id="lighting-controls"', 1)[1].split("<footer", 1)[0]
+        self.section = HTML.split('id="lighting-controls"', 1)[1].split('id="articles"', 1)[0]
         panel = self.section.split('<div class="shorts-panel">', 1)[1].split('<p class="related-reading">', 1)[0]
         self.videos = '<div class="shorts-panel">' + panel
         self.cards = {attr(attrs, "id"): body for attrs, body in articles(self.section + LEARN)}
@@ -76,15 +76,15 @@ class LightingControlsSectionTest(unittest.TestCase):
 
     def test_section_order_and_nav(self):
         self.assertLess(HTML.index('id="preview"'), HTML.index('id="lighting-controls"'))
-        free = (ROOT / "free.html").read_text(encoding="utf-8")
-        self.assertIn('id="free-quiz"', free)
+        self.assertIn('id="free-quiz"', HTML)
         self.assertIn("Lighting Controls", text_of(self.section, "h2"))
         self.assertIn("Florida commercial lighting controls for drafters and designers.", self.section)
-        self.assertIn('href="learn.html#articles"', self.section)
-        self.assertIn('href="learn.html#videos"', self.section)
+        self.assertIn('href="#florida-lighting-article"', self.section)
+        self.assertIn('href="#videos"', HTML)
+        self.assertIn('href="#articles"', HTML)
         header = HTML.split('aria-label="Main"', 1)[1].split("</nav>", 1)[0]
         categories = HTML.split('aria-label="Product categories"', 1)[1].split("</nav>", 1)[0]
-        self.assertIn('href="learn.html"', header)
+        self.assertIn('href="#lighting-controls"', header)
         self.assertIn('href="#lighting-controls"', categories)
         self.assertIn("#lighting-controls { scroll-margin-top: 9rem; }", CSS)
         desktop = CSS.split("@media (min-width: 768px)", 1)[1].split("}", 1)[0]
@@ -115,7 +115,7 @@ class LightingControlsSectionTest(unittest.TestCase):
     def test_article_links(self):
         card = self.cards["florida-lighting-article"]
         self.assertNotIn('id="florida-lighting-article"', self.section)
-        self.assertIn('href="learn.html#florida-lighting-article"', self.section)
+        self.assertIn('href="#florida-lighting-article"', self.section)
         self.assertIn(">Read the related article<", self.section)
         self.assertEqual(text_of(card, "h3"), ARTICLE)
         primary = hrefs(card, "btn btn-primary")

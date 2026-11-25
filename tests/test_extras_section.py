@@ -9,7 +9,7 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-HTML = (ROOT / "shop.html").read_text(encoding="utf-8")
+HTML = (ROOT / "index.html").read_text(encoding="utf-8")
 HOME = (ROOT / "index.html").read_text(encoding="utf-8")
 CSS = (ROOT / "styles.css").read_text(encoding="utf-8")
 
@@ -85,7 +85,7 @@ class ExtrasSectionTest(unittest.TestCase):
         header = HTML.split('aria-label="Main"', 1)[1].split("</nav>", 1)[0]
         self.assertEqual(
             re.findall(r'href="([^"]+)"', header),
-            ["index.html", "shop.html", "free.html", "learn.html"],
+            ["#products", "#bundles", "#extras", "#lighting-controls", "#articles", "#videos", "#free-quiz", "#free-revit-sheet", "#about", "#faq"],
         )
         categories = HTML.split('aria-label="Product categories"', 1)[1].split("</nav>", 1)[0]
         self.assertEqual(

@@ -10,10 +10,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 PAGES = ["index.html", "shop.html", "free.html", "learn.html"]
 HTML = {name: (ROOT / name).read_text(encoding="utf-8") for name in PAGES}
-SHOP = HTML["shop.html"]
 HOME = HTML["index.html"]
-FREE = HTML["free.html"]
-LEARN = HTML["learn.html"]
+SHOP = HOME
+FREE = HOME
+LEARN = HOME
 ALL = "\n".join(HTML.values())
 
 BANNED = (
@@ -51,27 +51,32 @@ def price_of(fragment):
 
 class OptionCLayoutTest(unittest.TestCase):
     def test_nav_and_tab_bar_on_every_page(self):
-        for name, html in HTML.items():
-            header = html.split('aria-label="Main"', 1)[1].split("</nav>", 1)[0]
-            self.assertEqual(
-                re.findall(r'href="([^"]+)"', header),
-                PAGES,
-                name,
-            )
-            tabs = html.split('aria-label="Mobile"', 1)[1].split("</nav>", 1)[0]
-            self.assertEqual(re.findall(r'href="([^"]+)"', tabs), PAGES, name)
-            self.assertIn("<main", html, name)
-            self.assertIn('class="skip-link"', html, name)
-            self.assertIn('href="https://x.com/RobinCWolfson"', html, name)
-            self.assertIn("X (@RobinCWolfson)", html, name)
+        header = HOME.split('aria-label="Main"', 1)[1].split("</nav>", 1)[0]
+        self.assertEqual(
+            re.findall(r'href="([^"]+)"', header),
+            [
+                "#products",
+                "#bundles",
+                "#extras",
+                "#lighting-controls",
+                "#articles",
+                "#videos",
+                "#free-quiz",
+                "#free-revit-sheet",
+                "#about",
+                "#faq",
+            ],
+        )
+        self.assertIn("<main", HOME)
+        self.assertIn('class="skip-link"', HOME)
+        self.assertIn('href="https://x.com/RobinCWolfson"', HOME)
+        self.assertIn("X (@RobinCWolfson)", HOME)
+        self.assertIn("Video Tutorials", HOME)
+        for name in ("shop.html", "free.html", "learn.html"):
+            self.assertIn('location.replace("index.html#', HTML[name], name)
 
     def test_shop_keeps_every_price_and_link(self):
         expected = {
-            "Green Belt Practice Quiz: 10 free questions": (
-                "Free",
-                "https://buymeacoffee.com/robinwolfson/e/593113",
-                None,
-            ),
             "Lean Six Sigma Green Belt Study Guide + 75-Question Practice Exam": (
                 "$15",
                 "https://buymeacoffee.com/robinwolfson/e/593083",
@@ -172,7 +177,8 @@ class OptionCLayoutTest(unittest.TestCase):
         # The permit kit is listed twice. The lighting card uses the short Etsy URL.
         lighting_etsy = "https://www.etsy.com/listing/4611461235"
         seen = {}
-        for attrs, body in articles(SHOP):
+        catalog = HOME.split('id="articles"', 1)[0]
+        for attrs, body in articles(catalog):
             title = plain(re.search(r"<h3\b[^>]*>(.*?)</h3>", body, flags=re.S).group(1))
             price = price_of(body)
             links = re.findall(r'href="([^"]+)"', body)
@@ -196,44 +202,23 @@ class OptionCLayoutTest(unittest.TestCase):
             ):
                 self.assertNotIn("buymeacoffee.com", body, title)
             seen[title] = True
-            topics = attr(attrs, "data-topics")
-            self.assertTrue(topics, title)
-            self.assertIn('data-price="', attrs if "data-price" in attrs else body, title)
-        self.assertEqual(set(seen), set(expected) - set())
+        self.assertEqual(set(seen), set(expected))
+        quiz = HOME.split('id="free-quiz"', 1)[1].split('id="free-revit-sheet"', 1)[0]
+        self.assertIn("Green Belt Practice Quiz: 10 free questions", quiz)
+        self.assertIn("https://buymeacoffee.com/robinwolfson/e/593113", quiz)
         # Both permit cards plus every other product.
-        self.assertGreaterEqual(len(list(articles(SHOP))), len(expected))
+        self.assertGreaterEqual(len(list(articles(catalog))), len(expected))
 
     def test_search_filter_and_sort_markup(self):
-        self.assertIn('<label for="shop-search">Search products</label>', SHOP)
-        self.assertIn('id="shop-search"', SHOP)
-        self.assertIn('type="search"', SHOP)
-        chips = SHOP.split('aria-label="Filter by topic"', 1)[1].split("</div>", 1)[0]
-        for label in (
-            "All",
-            "Lean Six Sigma",
-            "CAD &amp; Revit",
-            "Lighting Controls",
-            "Bundles",
-            "Licenses",
-            "Prints/Extras",
-            "Free",
-        ):
-            self.assertIn(f">{label}</button>", chips)
-        self.assertIn('role="radiogroup"', SHOP)
-        self.assertIn('value="featured"', SHOP)
-        self.assertIn('value="price-asc"', SHOP)
-        self.assertIn('value="price-desc"', SHOP)
-        self.assertIn('<label for="shop-sort">Sort</label>', SHOP)
-        # Cards are in the HTML, not created by the script.
-        self.assertNotRegex(SHOP, r'<article\b[^>]*\shidden\b')
-        script = (ROOT / "shop.js").read_text(encoding="utf-8")
-        self.assertIn('addEventListener("input"', script)
-        self.assertIn("data-topics", script)
-        self.assertIn("price-asc", script)
-        self.assertIn("price-desc", script)
-        anchors = (ROOT / "anchors.js").read_text(encoding="utf-8")
-        for anchor in ("articles", "videos", "products", "extras", "lighting-controls"):
-            self.assertIn(anchor, anchors)
+        shop = HTML["shop.html"]
+        self.assertIn("lss:", shop)
+        self.assertIn("lean-six-sigma", shop)
+        self.assertIn("index.html#", shop)
+        free = HTML["free.html"]
+        self.assertIn("free-quiz", free)
+        learn = HTML["learn.html"]
+        self.assertIn("articles", learn)
+        self.assertNotRegex(HOME, r'<article\b[^>]*\shidden\b')
 
     def test_free_items_on_home_and_free_resources(self):
         quiz = "https://buymeacoffee.com/robinwolfson/e/593113"
@@ -260,11 +245,8 @@ class OptionCLayoutTest(unittest.TestCase):
             self.assertIn(short, FREE)
         self.assertIn("https://youtube.com/shorts/ZFQOWlmhil4", FREE)
         self.assertIn('id="start-free"', HOME)
-        self.assertIn('id="free-quiz"', FREE)
+        self.assertIn('id="free-quiz"', HOME)
         self.assertIn('id="free-revit-sheet"', HOME)
-        self.assertIn('id="free-revit-sheet"', FREE)
-        self.assertIn('data-topics="lss free"', SHOP)
-        self.assertIn(">Free</button>", SHOP)
         self.assertNotIn("you@firm.com", ALL)
         self.assertNotIn("Send me the PDF", ALL)
 
