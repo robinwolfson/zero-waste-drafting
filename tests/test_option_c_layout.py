@@ -78,63 +78,63 @@ class OptionCLayoutTest(unittest.TestCase):
     def test_shop_keeps_every_price_and_link(self):
         expected = {
             "Lean Six Sigma Green Belt Study Guide + 75-Question Practice Exam": (
-                "$15",
+                "$11",
                 "https://buymeacoffee.com/robinwolfson/e/593083",
                 "https://zerowastedrafting.etsy.com/listing/4609955222/six-sigma-green-belt-study-guide-2026-75",
             ),
             "The Lean Six Sigma Toolkit": (
-                "$12",
+                "$9",
                 "https://buymeacoffee.com/robinwolfson/e/593067",
                 "https://zerowastedrafting.etsy.com/listing/4609933231/dmaic-toolkit-lean-six-sigma-templates",
             ),
             "The Freelance CAD Drafting Starter Guide": (
-                "$12",
+                "$9",
                 "https://buymeacoffee.com/robinwolfson/e/593100",
                 "https://zerowastedrafting.etsy.com/listing/4609956156/freelance-cad-drafting-guide-commercial",
             ),
             "Commercial AutoCAD Starter Kit": (
-                "$19",
+                "$14",
                 "https://buymeacoffee.com/robinwolfson/e/597741",
                 "https://zerowastedrafting.etsy.com/listing/4615757637/commercial-autocad-starter-kit-for",
             ),
             "The Commercial AutoCAD Standards Pack": (
-                "$17",
+                "$13",
                 "https://buymeacoffee.com/robinwolfson/e/597743",
                 "https://zerowastedrafting.etsy.com/listing/4615758689/autocad-standards-pack-commercial",
             ),
             "AI Prompt Pack for CAD and Revit Drafters": (
-                "$12",
+                "$9",
                 "https://buymeacoffee.com/robinwolfson/e/599857",
                 "https://www.etsy.com/listing/4620552083/ai-prompt-pack-for-cad-and-revit",
             ),
             "The Freelance Revit Playbook": (
-                "$17",
+                "$13",
                 "https://buymeacoffee.com/robinwolfson/e/597740",
                 "https://zerowastedrafting.etsy.com/listing/4615769344/the-freelance-revit-playbook-scope-price",
             ),
             "The Commercial Revit Template & Standards Pack": (
-                "$15",
+                "$11",
                 "https://buymeacoffee.com/robinwolfson/e/593881",
                 "https://zerowastedrafting.etsy.com/listing/4609957298/revit-template-standards-for-commercial",
             ),
             "Commercial Revit Template & Standards Pack, Classroom License": (
-                "$49",
+                "$39",
                 "https://buymeacoffee.com/robinwolfson/e/594979",
                 None,
             ),
             "Studio Team License": (
-                "$79",
+                "$59",
                 "https://buymeacoffee.com/robinwolfson/e/595451",
                 None,
             ),
             "Office Team License": (
-                "$139",
+                "$99",
                 "https://buymeacoffee.com/robinwolfson/e/595452",
                 None,
             ),
             "11+ seats": ("", "mailto:robinwolfson.drafting@gmail.com", None),
             "Lean Six Sigma Bundle": (
-                "$22",
+                "$16",
                 "https://buymeacoffee.com/robinwolfson/e/593126",
                 "https://zerowastedrafting.etsy.com/listing/4609959548/six-sigma-green-belt-bundle-study-guide",
             ),
@@ -149,7 +149,7 @@ class OptionCLayoutTest(unittest.TestCase):
                 "https://zerowastedrafting.etsy.com/listing/4615786025/freelance-revit-bundle-commercial",
             ),
             "Commercial Permit-Set QA/QC + Pre-Submittal Review Kit": (
-                "$29",
+                "$21",
                 "https://buymeacoffee.com/robinwolfson/e/595488",
                 "https://zerowastedrafting.etsy.com/listing/4611461235/commercial-permit-set-qaqc-checklist-pre",
             ),
@@ -184,7 +184,7 @@ class OptionCLayoutTest(unittest.TestCase):
             links = re.findall(r'href="([^"]+)"', body)
             card_id = attr(attrs, "id")
             if title == "Commercial Permit-Set QA/QC + Pre-Submittal Review Kit" and card_id == "lighting-permit-kit":
-                self.assertEqual(price, "$29")
+                self.assertEqual(price, "$21")
                 self.assertIn("https://buymeacoffee.com/robinwolfson/e/595488", links)
                 self.assertIn(lighting_etsy, links)
                 self.assertNotIn("buymeacoffee.com/robinwolfson/e/593", body.replace("/e/595488", ""))

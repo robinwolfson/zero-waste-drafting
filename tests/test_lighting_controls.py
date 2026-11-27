@@ -140,9 +140,9 @@ class LightingControlsSectionTest(unittest.TestCase):
         original = [body for attrs, body in articles(HTML) if attr(attrs, "id") == "permit-qaqc"]
         self.assertEqual(len(original), 1)
         self.assertEqual(text_of(card, "h3"), "Commercial Permit-Set QA/QC + Pre-Submittal Review Kit")
-        self.assertEqual(price_of(card), "$29")
+        self.assertEqual(price_of(card), "$21")
         self.assertEqual(price_of(card), price_of(original[0]))
-        self.assertIn(">Buy for $29<", card)
+        self.assertIn(">Buy for $21<", card)
         self.assertIn(">Also on Etsy<", card)
         self.assertIn('href="#commercial-permitting"', card)
         primary = hrefs(card, "btn btn-primary")
