@@ -385,7 +385,7 @@ class PermitKitCardTest(unittest.TestCase):
         expected = {
             "commercial-autocad-bundle": {
                 "title": "The Commercial AutoCAD Bundle",
-                "price": "$39",
+                "price": "$29",
                 "bmac": "https://buymeacoffee.com/robinwolfson/e/597753",
                 "etsy": "https://zerowastedrafting.etsy.com/listing/4615785177/commercial-autocad-bundle-freelance-cad",
                 "cover": "images/commercial-autocad-bundle-cover.jpg",
@@ -397,11 +397,13 @@ class PermitKitCardTest(unittest.TestCase):
                     "($9)",
                     "($14)",
                     "($13)",
+                    "Save $7",
+                    "$36",
                 ],
             },
             "freelance-revit-bundle": {
                 "title": "The Freelance Revit Bundle",
-                "price": "$26",
+                "price": "$19",
                 "bmac": "https://buymeacoffee.com/robinwolfson/e/597754",
                 "etsy": "https://zerowastedrafting.etsy.com/listing/4615786025/freelance-revit-bundle-commercial",
                 "cover": "images/freelance-revit-bundle-cover.jpg",
@@ -411,6 +413,8 @@ class PermitKitCardTest(unittest.TestCase):
                     "The Freelance Revit Playbook",
                     "($11)",
                     "($13)",
+                    "Save $5",
+                    "$24",
                 ],
             },
         }
@@ -426,8 +430,7 @@ class PermitKitCardTest(unittest.TestCase):
             self.assertIn('height="800"', card)
             for phrase in spec["contains"]:
                 self.assertIn(phrase, card)
-            self.assertNotIn("Save $", card)
-            self.assertNotIn("<s>", card)
+            self.assertIn("<s>", card)
             primary = hrefs(card, "btn btn-primary")
             secondary = hrefs(card, "btn btn-secondary")
             self.assertEqual([href for href, _ in primary], [spec["bmac"]])

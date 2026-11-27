@@ -139,12 +139,12 @@ class OptionCLayoutTest(unittest.TestCase):
                 "https://zerowastedrafting.etsy.com/listing/4609959548/six-sigma-green-belt-bundle-study-guide",
             ),
             "The Commercial AutoCAD Bundle": (
-                "$39",
+                "$29",
                 "https://buymeacoffee.com/robinwolfson/e/597753",
                 "https://zerowastedrafting.etsy.com/listing/4615785177/commercial-autocad-bundle-freelance-cad",
             ),
             "The Freelance Revit Bundle": (
-                "$26",
+                "$19",
                 "https://buymeacoffee.com/robinwolfson/e/597754",
                 "https://zerowastedrafting.etsy.com/listing/4615786025/freelance-revit-bundle-commercial",
             ),
