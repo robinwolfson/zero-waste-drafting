@@ -255,7 +255,9 @@ class OptionCLayoutTest(unittest.TestCase):
         videos = LEARN.split('id="videos"', 1)[1]
         self.assertIn("ASQ vs IASSC vs CSSC: Which Green Belt Certification Should You Actually Take?", articles_html)
         self.assertEqual(len(set(re.findall(r"https://medium.com/@robinwolfson\.drafting/[a-z0-9-]+", LEARN))), 6)
-        self.assertEqual(len(set(re.findall(r"youtube\.com/watch\?v=([A-Za-z0-9_-]+)", LEARN))), 13)
+        self.assertEqual(len(set(re.findall(r"youtube\.com/watch\?v=([A-Za-z0-9_-]+)", LEARN))), 14)
+        self.assertIn("https://www.youtube.com/watch?v=h29bPQ2JZKE", LEARN)
+        self.assertIn("https://youtube.com/shorts/2V-zXY_i6O4", LEARN)
         self.assertIn("ZFQOWlmhil4", LEARN)
         self.assertIn("Read on Medium", articles_html)
         self.assertIn("Read on Substack", articles_html)
@@ -267,7 +269,11 @@ class OptionCLayoutTest(unittest.TestCase):
             LEARN,
         )
         self.assertIn('id="faq"', HOME)
-        self.assertIn("Physical print-on-demand items, sold only on Etsy.", SHOP)
+        self.assertIn("Physical print-on-demand items, sold on Etsy. The calendar is also on Amazon.", SHOP)
+        self.assertIn("https://www.amazon.com/dp/B0HT3V8KF7", SHOP)
+        self.assertIn("Paperback on Amazon — $24.99", SHOP)
+        self.assertIn("https://www.amazon.com/dp/B0HSVXGLQF", SHOP)
+        self.assertIn("Buy on Amazon — $39.99", SHOP)
         self.assertIn('id="preview"', SHOP)
         self.assertIn('id="about"', HOME)
 

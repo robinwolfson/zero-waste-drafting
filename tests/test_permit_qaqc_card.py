@@ -543,6 +543,7 @@ class PermitKitCardTest(unittest.TestCase):
         js = (ROOT / "analytics.js").read_text(encoding="utf-8")
         self.assertIn("click-bmac", js)
         self.assertIn("click-etsy", js)
+        self.assertIn("click-amazon", js)
         self.assertIn("download-cheat-sheet", js)
         self.assertIn("form-submit-revit-cheat-sheet", js)
         self.assertIn("mlWebformSubmitSuccess", js)
