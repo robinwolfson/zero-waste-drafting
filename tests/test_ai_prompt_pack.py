@@ -77,8 +77,8 @@ class AiPromptPackCardTest(unittest.TestCase):
         self.assertIn(DESCRIPTION, plain(self.card))
         self.assertIn(DISCLAIMER, plain(self.card))
         self.assertIn('class="note"', self.card)
-        self.assertIn("$12", self.card)
-        self.assertIn("Etsy $14", self.card)
+        self.assertIn("$9", self.card)
+        self.assertIn("Etsy $10", self.card)
 
     def test_store_buttons(self):
         primary = hrefs(self.card, "btn btn-primary")
@@ -87,8 +87,8 @@ class AiPromptPackCardTest(unittest.TestCase):
         self.assertEqual([href for href, _ in primary], [BMAC])
         self.assertEqual([href for href, _ in secondary], [ETSY])
         self.assertEqual([href for href, _ in title], [BMAC])
-        self.assertIn(">Buy on Buy Me a Coffee — $12<", self.card)
-        self.assertIn(">Etsy — $14<", self.card)
+        self.assertIn(">Buy on Buy Me a Coffee — $9<", self.card)
+        self.assertIn(">Etsy — $10<", self.card)
         for _, extra in primary + secondary + title:
             self.assertIn('target="_blank"', extra)
             self.assertIn('rel="noopener"', extra)

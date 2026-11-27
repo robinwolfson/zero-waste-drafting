@@ -1,6 +1,6 @@
 """Video Tutorials section: long-form YouTube videos, newest first within each topic.
 
-The channel videos tab lists 13 public long-form videos. None of them are
+The channel videos tab lists 14 public long-form videos. None of them are
 Lighting Controls (those are Shorts), so the section has two topic groups.
 
 Run from the repo root: python3 -m unittest tests/test_videos.py
@@ -24,6 +24,7 @@ LEAN = (
     ("Cwk2REDGxJk", "DMAIC in 60 Seconds | Lean Six Sigma Explained (Animated)"),
 )
 CAD = (
+    ("h29bPQ2JZKE", "AutoCAD Dynamic Block Stretch: One Desk Block, Every Width"),
     ("prBmRY3U4S0", "How I Handle Client Redlines on Freelance CAD Work (4 Steps)"),
     ("yW8NzI9pf68", "AutoCAD Page Setups for Commercial Sheet Sets (4 Steps)"),
     ("noAW4EDjARg", "Revit View Templates for Commercial Projects (4 Steps)"),
@@ -80,7 +81,7 @@ class VideoTutorialsTest(unittest.TestCase):
 
     def test_long_form_cards_match_the_channel_videos(self):
         expected = LEAN + CAD
-        self.assertEqual(len(self.cards), 13)
+        self.assertEqual(len(self.cards), 14)
         self.assertEqual(len(self.cards), len(expected))
         lean_html, cad_html = self.section.split('id="videos-cad"', 1)
         lean_ids = [attr(attrs, "id") for attrs, _ in articles(lean_html)]

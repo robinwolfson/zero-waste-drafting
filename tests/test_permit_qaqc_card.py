@@ -17,42 +17,42 @@ CSS = (ROOT / "styles.css").read_text(encoding="utf-8")
 # not rewrite these.
 EXISTING = {
     "Lean Six Sigma Green Belt Study Guide + 75-Question Practice Exam": (
-        "$15",
+        "$11",
         "https://buymeacoffee.com/robinwolfson/e/593083",
         "https://zerowastedrafting.etsy.com/listing/4609955222/six-sigma-green-belt-study-guide-2026-75",
     ),
     "The Lean Six Sigma Toolkit": (
-        "$12",
+        "$9",
         "https://buymeacoffee.com/robinwolfson/e/593067",
         "https://zerowastedrafting.etsy.com/listing/4609933231/dmaic-toolkit-lean-six-sigma-templates",
     ),
     "The Freelance CAD Drafting Starter Guide": (
-        "$12",
+        "$9",
         "https://buymeacoffee.com/robinwolfson/e/593100",
         "https://zerowastedrafting.etsy.com/listing/4609956156/freelance-cad-drafting-guide-commercial",
     ),
     "The Commercial Revit Template & Standards Pack": (
-        "$15",
+        "$11",
         "https://buymeacoffee.com/robinwolfson/e/593881",
         "https://zerowastedrafting.etsy.com/listing/4609957298/revit-template-standards-for-commercial",
     ),
     "Commercial Revit Template & Standards Pack, Classroom License": (
-        "$49",
+        "$39",
         "https://buymeacoffee.com/robinwolfson/e/594979",
         None,
     ),
     "Lean Six Sigma Bundle": (
-        "$22",
+        "$16",
         "https://buymeacoffee.com/robinwolfson/e/593126",
         "https://zerowastedrafting.etsy.com/listing/4609959548/six-sigma-green-belt-bundle-study-guide",
     ),
     "Studio Team License": (
-        "$79",
+        "$59",
         "https://buymeacoffee.com/robinwolfson/e/595451",
         None,
     ),
     "Office Team License": (
-        "$139",
+        "$99",
         "https://buymeacoffee.com/robinwolfson/e/595452",
         None,
     ),
@@ -191,7 +191,7 @@ class PermitKitCardTest(unittest.TestCase):
 
     def test_price_formats_and_store_links(self):
         self.assertEqual(text_of(self.card, "h3"), "Commercial Permit-Set QA/QC + Pre-Submittal Review Kit")
-        self.assertEqual(price_of(self.card), "$29")
+        self.assertEqual(price_of(self.card), "$21")
         self.assertNotIn("$32", self.card)
         self.assertNotIn("25.60", self.card)
         self.assertIn("Guide PDF", self.card)
@@ -211,7 +211,7 @@ class PermitKitCardTest(unittest.TestCase):
             self.assertIn('target="_blank"', extra)
             self.assertIn('rel="noopener"', extra)
         self.assertNotIn("downloads/", self.card)
-        self.assertIn("Buy for $29", self.card)
+        self.assertIn("Buy for $21", self.card)
         self.assertIn("Also on Etsy", self.card)
 
     def test_no_approval_or_sale_claims(self):
@@ -280,8 +280,8 @@ class PermitKitCardTest(unittest.TestCase):
         self.assertLess(product_html.index('id="office-team-license"'), product_html.index('id="team-license-quote"'))
 
         for card, price, href in (
-            (studio, "$79", "https://buymeacoffee.com/robinwolfson/e/595451"),
-            (office, "$139", "https://buymeacoffee.com/robinwolfson/e/595452"),
+            (studio, "$59", "https://buymeacoffee.com/robinwolfson/e/595451"),
+            (office, "$99", "https://buymeacoffee.com/robinwolfson/e/595452"),
         ):
             self.assertEqual(price_of(card), price)
             self.assertIn("Commercial Revit Template &amp; Standards Pack", card)
@@ -298,8 +298,8 @@ class PermitKitCardTest(unittest.TestCase):
         self.assertIn("up to 5", studio)
         self.assertIn("Up to 10 users", office)
         self.assertIn("up to 10", office)
-        self.assertNotIn("$79", office)
-        self.assertNotIn("$139", studio)
+        self.assertNotIn("$99", studio)
+        self.assertNotIn("$59", office)
         self.assertNotIn('class="price"', quote)
         self.assertNotIn("buymeacoffee.com", quote)
         self.assertNotIn("etsy", quote.lower())
@@ -318,7 +318,7 @@ class PermitKitCardTest(unittest.TestCase):
         expected = {
             "freelance-revit-playbook": {
                 "title": "The Freelance Revit Playbook",
-                "price": "$17",
+                "price": "$13",
                 "bmac": "https://buymeacoffee.com/robinwolfson/e/597740",
                 "etsy": "https://zerowastedrafting.etsy.com/listing/4615769344/the-freelance-revit-playbook-scope-price",
                 "cover": "images/freelance-revit-playbook-cover.jpg",
@@ -326,7 +326,7 @@ class PermitKitCardTest(unittest.TestCase):
             },
             "autocad-starter-kit": {
                 "title": "Commercial AutoCAD Starter Kit",
-                "price": "$19",
+                "price": "$14",
                 "bmac": "https://buymeacoffee.com/robinwolfson/e/597741",
                 "etsy": "https://zerowastedrafting.etsy.com/listing/4615757637/commercial-autocad-starter-kit-for",
                 "cover": "images/commercial-autocad-starter-kit-cover.jpg",
@@ -334,7 +334,7 @@ class PermitKitCardTest(unittest.TestCase):
             },
             "autocad-standards-pack": {
                 "title": "The Commercial AutoCAD Standards Pack",
-                "price": "$17",
+                "price": "$13",
                 "bmac": "https://buymeacoffee.com/robinwolfson/e/597743",
                 "etsy": "https://zerowastedrafting.etsy.com/listing/4615758689/autocad-standards-pack-commercial",
                 "cover": "images/commercial-autocad-standards-pack-cover.jpg",
@@ -385,7 +385,7 @@ class PermitKitCardTest(unittest.TestCase):
         expected = {
             "commercial-autocad-bundle": {
                 "title": "The Commercial AutoCAD Bundle",
-                "price": "$39",
+                "price": "$29",
                 "bmac": "https://buymeacoffee.com/robinwolfson/e/597753",
                 "etsy": "https://zerowastedrafting.etsy.com/listing/4615785177/commercial-autocad-bundle-freelance-cad",
                 "cover": "images/commercial-autocad-bundle-cover.jpg",
@@ -394,13 +394,16 @@ class PermitKitCardTest(unittest.TestCase):
                     "Freelance CAD Drafting Starter Guide",
                     "Commercial AutoCAD Starter Kit",
                     "The Commercial AutoCAD Standards Pack",
-                    "Save $9",
-                    "$48",
+                    "($9)",
+                    "($14)",
+                    "($13)",
+                    "Save $7",
+                    "$36",
                 ],
             },
             "freelance-revit-bundle": {
                 "title": "The Freelance Revit Bundle",
-                "price": "$26",
+                "price": "$19",
                 "bmac": "https://buymeacoffee.com/robinwolfson/e/597754",
                 "etsy": "https://zerowastedrafting.etsy.com/listing/4615786025/freelance-revit-bundle-commercial",
                 "cover": "images/freelance-revit-bundle-cover.jpg",
@@ -408,8 +411,10 @@ class PermitKitCardTest(unittest.TestCase):
                 "contains": [
                     "Commercial Revit Template &amp; Standards Pack",
                     "The Freelance Revit Playbook",
-                    "Save $6",
-                    "$32",
+                    "($11)",
+                    "($13)",
+                    "Save $5",
+                    "$24",
                 ],
             },
         }
@@ -425,6 +430,7 @@ class PermitKitCardTest(unittest.TestCase):
             self.assertIn('height="800"', card)
             for phrase in spec["contains"]:
                 self.assertIn(phrase, card)
+            self.assertIn("<s>", card)
             primary = hrefs(card, "btn btn-primary")
             secondary = hrefs(card, "btn btn-secondary")
             self.assertEqual([href for href, _ in primary], [spec["bmac"]])
@@ -543,6 +549,7 @@ class PermitKitCardTest(unittest.TestCase):
         js = (ROOT / "analytics.js").read_text(encoding="utf-8")
         self.assertIn("click-bmac", js)
         self.assertIn("click-etsy", js)
+        self.assertIn("click-amazon", js)
         self.assertIn("download-cheat-sheet", js)
         self.assertIn("form-submit-revit-cheat-sheet", js)
         self.assertIn("mlWebformSubmitSuccess", js)

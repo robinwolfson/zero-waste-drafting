@@ -327,6 +327,17 @@ h3 { font-size: 1.2rem; }
 .video-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.75rem; }
 /* "Buy on Buy Me a Coffee — $12" is longer than "Buy for $12", so these store buttons stack. */
 #ai-prompt-pack .purchase-actions { flex-direction: column; }
+/* "Paperback on Amazon — $24.99" is longer than the existing pair, so it sits on its own row when those two sit side by side. Below that width the buttons already stack. */
+#green-belt-study-guide .purchase-actions { flex-wrap: wrap; }
+@container (min-width: 280px) {
+  #green-belt-study-guide .purchase-actions .btn:nth-child(3) {
+    flex: 1 1 100%;
+    width: 100%;
+    white-space: normal;
+  }
+}
+/* "Buy on Amazon — $39.99" is longer than "Buy on Etsy", so these store buttons stack. */
+#drafting-scenes-calendar .purchase-actions { flex-direction: column; }
 
 /* Preview */
 .preview-grid figure { margin: 0; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }

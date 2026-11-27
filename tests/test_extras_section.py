@@ -1,4 +1,4 @@
-"""Extras section: physical prints sold only on Etsy.
+"""Extras section: physical prints sold on Etsy, with the calendar also on Amazon.
 
 Run from the repo root: python3 -m unittest tests/test_extras_section.py
 """
@@ -14,6 +14,7 @@ HOME = (ROOT / "index.html").read_text(encoding="utf-8")
 CSS = (ROOT / "styles.css").read_text(encoding="utf-8")
 
 CALENDAR_URL = "https://www.etsy.com/listing/4621033798"
+CALENDAR_AMAZON_URL = "https://www.amazon.com/dp/B0HSVXGLQF"
 POSTER_URL = "https://www.etsy.com/listing/4619695521"
 CAD_POSTER_URL = "https://www.etsy.com/listing/4620179623"
 
@@ -71,7 +72,11 @@ class ExtrasSectionTest(unittest.TestCase):
     def test_section_sits_between_the_guides_and_the_preview(self):
         self.assertLess(HTML.index('id="products"'), HTML.index('id="extras"'))
         self.assertLess(HTML.index('id="extras"'), HTML.index('id="preview"'))
-        self.assertIn("Physical print-on-demand items, sold only on Etsy.", self.extras)
+        self.assertIn(
+            "Physical print-on-demand items, sold on Etsy. The calendar is also on Amazon.",
+            self.extras,
+        )
+        self.assertNotIn("sold only on Etsy", self.extras)
         self.assertEqual(
             [text_of(body, "h3") for body in self.cards.values()],
             [
@@ -148,18 +153,30 @@ class ExtrasSectionTest(unittest.TestCase):
             self.assertEqual(card.count(">Buy on Etsy<"), 1)
             self.assertNotIn("Buy Me a Coffee", card)
             self.assertNotIn("buymeacoffee.com", card)
-            self.assertNotIn("btn-secondary", card)
             self.assertNotIn("Also on Etsy", card)
             links = re.findall(r'<a class="([^"]*)" href="([^"]+)"([^>]*)>', card)
-            self.assertEqual(
-                [(cls, href) for cls, href, _ in links],
-                [
-                    ("card-title-link", spec["url"]),
-                    ("btn btn-primary", spec["url"]),
-                ],
-            )
+            if card_id == "drafting-scenes-calendar":
+                self.assertIn(">Buy on Amazon — $39.99<", card)
+                self.assertEqual(
+                    [(cls, href) for cls, href, _ in links],
+                    [
+                        ("card-title-link", spec["url"]),
+                        ("btn btn-primary", spec["url"]),
+                        ("btn btn-secondary", CALENDAR_AMAZON_URL),
+                    ],
+                )
+            else:
+                self.assertNotIn("btn-secondary", card)
+                self.assertNotIn("amazon.com", card)
+                self.assertEqual(
+                    [(cls, href) for cls, href, _ in links],
+                    [
+                        ("card-title-link", spec["url"]),
+                        ("btn btn-primary", spec["url"]),
+                    ],
+                )
             for _, href, extra in links:
-                self.assertEqual(href, spec["url"])
+                self.assertIn(href, (spec["url"], CALENDAR_AMAZON_URL))
                 self.assertNotIn(spec["url"] + "/", card)
                 self.assertIn('target="_blank"', extra)
                 self.assertIn('rel="noopener"', extra)
@@ -183,6 +200,7 @@ class ExtrasSectionTest(unittest.TestCase):
 
         self.assertNotIn("buymeacoffee.com", self.extras)
         self.assertEqual(self.extras.count(CALENDAR_URL), 2)
+        self.assertEqual(self.extras.count(CALENDAR_AMAZON_URL), 1)
         self.assertEqual(self.extras.count(POSTER_URL), 2)
         self.assertEqual(self.extras.count(CAD_POSTER_URL), 2)
         self.assertNotEqual(

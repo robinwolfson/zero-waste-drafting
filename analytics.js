@@ -69,6 +69,9 @@
     if (host === "etsy.com" || host.endsWith(".etsy.com")) {
       return "click-etsy";
     }
+    if (host === "amazon.com" || host.endsWith(".amazon.com")) {
+      return "click-amazon";
+    }
     if (/\.pdf$/i.test(path) || path.indexOf("Commercial-Revit-Naming-Cheat-Sheet") !== -1) {
       return "download-cheat-sheet";
     }
